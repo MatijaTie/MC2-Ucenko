@@ -23,8 +23,6 @@ public class ToolbarIconsTouchListener implements View.OnTouchListener{
                 ClipData viewShadow = ClipData.newPlainText(viewType, view.getWidth()+":"+view.getHeight());
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                 view.startDrag(viewShadow, shadowBuilder, view, 0);
-
-
                 return true;
         }
         return false;

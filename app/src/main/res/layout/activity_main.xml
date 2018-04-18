@@ -6,16 +6,15 @@
     android:layout_height="match_parent"
     tools:context="com.example.tie.mc2.MainActivity">
 
-
     <FrameLayout
         android:id="@+id/holder_main_toolbar"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@color/colorAccent">
+        android:background="@color/colorAccent"
+        >
 
     </FrameLayout>
-
     <FrameLayout
         android:id="@+id/holder_main_board"
         android:layout_width="0dp"

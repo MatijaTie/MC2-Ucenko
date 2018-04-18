@@ -1,7 +1,9 @@
-package com.example.tie.mc2.Gestures;
+package com.example.tie.mc2.BoardViews;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,7 +20,7 @@ import com.example.tie.mc2.R;
  * Created by Tie on 31-Mar-18.
  */
 
-public class rootView extends RelativeLayout implements View.OnFocusChangeListener, View.OnTouchListener, GestureDetector.OnGestureListener {
+public class rootView extends RelativeLayout implements View.OnDragListener, View.OnLayoutChangeListener, View.OnFocusChangeListener, View.OnTouchListener, GestureDetector.OnGestureListener {
     private GestureDetector gestureEvent;
     private RelativeLayout thisView;
     private FrameLayout mainComponentHolder;
@@ -39,7 +41,7 @@ public class rootView extends RelativeLayout implements View.OnFocusChangeListen
 
 
         //Inflate custom layout
-        inflate(context, R.layout.frame_layout_test, this);
+        inflate(context, R.layout.board_component_holder, this);
 
         //inicijalizacija holdera za optionse viewa
         viewOptionsHolder = findViewById(R.id.view_options_holder);
@@ -216,11 +218,22 @@ public class rootView extends RelativeLayout implements View.OnFocusChangeListen
     }
 
     private void animateView(MotionEvent event) {
-        thisView.animate()
+        /*
+
+            thisView.animate()
                 .x(event.getRawX() + dX)
                 .y(event.getRawY() + dY)
                 .setDuration(0)
                 .start();
+
+                */
+
+        ClipData data = ClipData.newPlainText("", "");
+        DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
+                thisView);
+        thisView.startDrag(data, shadowBuilder, thisView, 0);
+        //thisView.setVisibility(View.INVISIBLE);
+
     }
 
     @Override
@@ -231,6 +244,16 @@ public class rootView extends RelativeLayout implements View.OnFocusChangeListen
         } else {
             Toast.makeText(getContext(), "nema focus", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        Toast.makeText(getContext(), "resizing...",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onDrag(View v, DragEvent event) {
+        return false;
     }
 }
 

@@ -7,6 +7,15 @@
     android:clickable="true"
 
     >
+    <FrameLayout
+        android:id="@+id/trash"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/delete_view_empty"
+
+        ></FrameLayout>
 
 
 </RelativeLayout>
