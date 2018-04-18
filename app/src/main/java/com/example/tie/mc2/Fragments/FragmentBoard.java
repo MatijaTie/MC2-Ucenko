@@ -80,7 +80,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 return true;
 
             case DragEvent.ACTION_DRAG_ENTERED:
-               return true;
+                return true;
 
             case DragEvent.ACTION_DROP:
                 if (event.getClipData().getItemAt(0).getText().length() > 0){
