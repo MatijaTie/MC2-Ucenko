@@ -2,6 +2,7 @@ package com.example.tie.mc2.BoardViews;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.icu.text.UnicodeSetSpanner;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
@@ -20,7 +21,7 @@ import com.example.tie.mc2.R;
  * Created by Tie on 31-Mar-18.
  */
 
-public class rootView extends RelativeLayout implements View.OnDragListener, View.OnLayoutChangeListener, View.OnFocusChangeListener, View.OnTouchListener, GestureDetector.OnGestureListener {
+public class rootView extends RelativeLayout implements View.OnTouchListener {
     private GestureDetector gestureEvent;
     private RelativeLayout thisView;
     private FrameLayout mainComponentHolder;
@@ -39,7 +40,6 @@ public class rootView extends RelativeLayout implements View.OnDragListener, Vie
     public rootView(Context context, View v) {
         super(context);
 
-
         //Inflate custom layout
         inflate(context, R.layout.board_component_holder, this);
 
@@ -55,20 +55,22 @@ public class rootView extends RelativeLayout implements View.OnDragListener, Vie
         //reference to rootView class
         thisView = this;
         thisView.setOnTouchListener(this);
-        thisView.setOnFocusChangeListener(this);
 
         //initiate move view
         moveButton = findViewById(R.id.view_drag_button);
         moveButton.bringToFront();
+
         moveButton.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                return AnimationTouchListener(event);
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        animateView();
+                        return true;
+                }
+                return true;
             }
         });
-
-        //initiate gesture event
-        gestureEvent = new GestureDetector(context, this);
     }
 
 
@@ -78,7 +80,7 @@ public class rootView extends RelativeLayout implements View.OnDragListener, Vie
             case MotionEvent.ACTION_DOWN:
                 touchFlag = true;
                 thisView.bringToFront();
-                return gestureEvent.onTouchEvent(event);
+                return true;
 
             case MotionEvent.ACTION_MOVE:
                 int sideClicked = getViewTouchPosition(v, event);
@@ -163,98 +165,15 @@ public class rootView extends RelativeLayout implements View.OnDragListener, Vie
         }
     }
 
-    public boolean AnimationTouchListener(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                setCordinates(thisView, event);
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-                animateView(event);
-                break;
-
-            default:
-                return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onDown(MotionEvent e) {
-        // Log.d("gesture", "onDown");
-        return true;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        //  Log.d("gesture","OnSingle Tap Up");
-        return true;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return true;
-    }
-
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-        //     Log.d("gesture","longPress");
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        return true;
-    }
-
-    private void setCordinates(View v, MotionEvent event) {
-        dX = v.getX() - event.getRawX();
-        dY = v.getY() - event.getRawY();
-    }
-
-    private void animateView(MotionEvent event) {
-        /*
-
-            thisView.animate()
-                .x(event.getRawX() + dX)
-                .y(event.getRawY() + dY)
-                .setDuration(0)
-                .start();
-
-                */
-
+    private void animateView(){
         ClipData data = ClipData.newPlainText("", "");
         DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
                 thisView);
         thisView.startDrag(data, shadowBuilder, thisView, 0);
-        //thisView.setVisibility(View.INVISIBLE);
-
+        thisView.setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        Log.d("hasfocus","trigger");
-        if (hasFocus) {
-            Toast.makeText(getContext(), "has focus", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "nema focus", Toast.LENGTH_SHORT).show();
-        }
-    }
 
-    @Override
-    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        Toast.makeText(getContext(), "resizing...",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public boolean onDrag(View v, DragEvent event) {
-        return false;
-    }
 }
 
 
