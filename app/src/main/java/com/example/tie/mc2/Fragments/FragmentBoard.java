@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.tie.mc2.BoardViews.TimelineView;
 import com.example.tie.mc2.BoardViews.pictureView;
 import com.example.tie.mc2.Gestures.myButtonView;
 import com.example.tie.mc2.BoardViews.rootView;
@@ -109,14 +110,17 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
             case INDENTIFIER_BUTTON:
                 //ovdje idu konstruktori i dodavanje custom viewa na plocu
                 //primjer:
-                viewGroup = new rootView(context,new pictureView(context));
-                mainLayout.addView(viewGroup);
-                params = viewGroup.getLayoutParams();
-                params.width = 400;
-                params.height = 400;
-                viewGroup.setLayoutParams(params);
-                viewGroup.setX(posX-offsetX);
-                viewGroup.setY(posY-offsetY);
+
+                rootView rootView = new rootView(context);
+                rootView.addViewToHolder(new TimelineView(context, rootView));
+
+                mainLayout.addView(rootView);
+                params = rootView.getLayoutParams();
+                params.width = 750;
+                params.height = 350;
+                rootView.setLayoutParams(params);
+                rootView.setX(posX-offsetX);
+                rootView.setY(posY-offsetY);
                 break;
 
             case INDENTIFIER_BUTTON2:
@@ -163,7 +167,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
         }else {
             draggedView.setX(newPosX);
         }
-        
+
         if(newPosY < 0){
             draggedView.setY(0);
         }else{

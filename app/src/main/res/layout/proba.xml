@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="vertical"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:paddingTop="50dp"
+
+    >
+    <Button
+
+        android:id="@+id/timelineBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/component_timline_timestamp"
+
+        />
+
+    <EditText
+        android:id="@+id/etx1"
+        android:layout_centerHorizontal="true"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/timelineBtn"
+        android:inputType="number"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/etx1" />
+
+
+</RelativeLayout>

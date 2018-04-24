@@ -36,6 +36,44 @@ public class rootView extends RelativeLayout implements View.OnTouchListener {
         MIN_WIDTH = 200;
         MIN_HEIGHT = 200;
     }
+    public rootView(Context context) {
+        super(context);
+
+        //Inflate custom layout
+        inflate(context, R.layout.board_component_holder, this);
+
+        //inicijalizacija holdera za optionse viewa
+        viewOptionsHolder = findViewById(R.id.view_options_holder);
+        viewOptionsHolder.setVisibility(LinearLayout.VISIBLE);
+
+        //initiate main component holder
+        mainComponentHolder = findViewById(R.id.view_main_frame);
+        mainComponentHolder.setFocusable(true);
+
+        //reference to rootView class
+        thisView = this;
+        thisView.setOnTouchListener(this);
+
+        //initiate move view
+        moveButton = findViewById(R.id.view_drag_button);
+        moveButton.bringToFront();
+
+        moveButton.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        animateView();
+                        return true;
+                }
+                return true;
+            }
+        });
+    }
+
+    public void addViewToHolder(View v){
+        mainComponentHolder.addView(v, ViewGroup.LayoutParams.MATCH_PARENT);
+    }
 
     public rootView(Context context, View v) {
         super(context);
@@ -93,7 +131,7 @@ public class rootView extends RelativeLayout implements View.OnTouchListener {
                 touchFlag = false;
                 return true;
         }
-        return gestureEvent.onTouchEvent(event);
+        return true;
     }
 
     /*
