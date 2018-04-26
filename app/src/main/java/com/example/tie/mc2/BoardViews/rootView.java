@@ -22,7 +22,7 @@ import com.example.tie.mc2.R;
  * Created by Tie on 31-Mar-18.
  */
 
-public class rootView extends RelativeLayout implements View.OnTouchListener {
+public class RootView extends RelativeLayout implements View.OnTouchListener {
     private GestureDetector gestureEvent;
     private RelativeLayout thisView;
     private FrameLayout mainComponentHolder;
@@ -40,7 +40,7 @@ public class rootView extends RelativeLayout implements View.OnTouchListener {
         MIN_HEIGHT = 200;
 
     }
-    public rootView(Context context) {
+    public RootView(Context context) {
         super(context);
 
         //Inflate custom layout
@@ -81,42 +81,6 @@ public class rootView extends RelativeLayout implements View.OnTouchListener {
     }
     public void addViewToViewOptionsHolder(View v){
         viewOptionsHolder.addView(v);
-    }
-
-    public rootView(Context context, View v) {
-        super(context);
-
-        //Inflate custom layout
-        inflate(context, R.layout.board_component_holder, this);
-
-        //inicijalizacija holdera za optionse viewa
-        viewOptionsHolder = findViewById(R.id.view_options_holder);
-        viewOptionsHolder.setVisibility(LinearLayout.VISIBLE);
-
-        //initiate main component holder
-        mainComponentHolder = findViewById(R.id.view_main_frame);
-        mainComponentHolder.addView(v, ViewGroup.LayoutParams.MATCH_PARENT);
-        mainComponentHolder.setFocusable(true);
-
-        //reference to rootView class
-        thisView = this;
-        thisView.setOnTouchListener(this);
-
-        //initiate move view
-        moveButton = findViewById(R.id.view_drag_button);
-        moveButton.bringToFront();
-
-        moveButton.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        animateView();
-                        return true;
-                }
-                return true;
-            }
-        });
     }
 
 

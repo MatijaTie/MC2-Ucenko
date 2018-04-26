@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/colorPrimaryDark"/>
+            <solid android:color="@color/draggButton"/>
             <corners android:topRightRadius="50dp"
                 android:bottomRightRadius="50dp"/>
         </shape>

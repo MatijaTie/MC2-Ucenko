@@ -13,16 +13,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
-import com.example.tie.mc2.BoardViews.TimelineView;
-import com.example.tie.mc2.BoardViews.pictureView;
+import com.example.tie.mc2.BoardViews.BoardTextView;
+import com.example.tie.mc2.BoardViews.BoardTimelineView;
+import com.example.tie.mc2.BoardViews.BoardImageView;
+import com.example.tie.mc2.BoardViews.OptionsImageTakePhotoButton;
 import com.example.tie.mc2.BoardViews.OptionsTimlineAddButton;
-import com.example.tie.mc2.BoardViews.rootView;
+import com.example.tie.mc2.BoardViews.RootView;
 import com.example.tie.mc2.Listeners.TrashOnDragListener;
 import com.example.tie.mc2.R;
+import com.example.tie.mc2.ToolbarComponents.TextComponentDraggable;
 
 /**
  * Created by Tie on 10-Mar-18.
@@ -95,55 +97,50 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
     }
 
     private void createDraggedView(DragEvent event, String sizeString, String typeString){
-        float posX, posY;
+        float posX, posY, x, y;
         float offsetX,offsetY;
-        ViewGroup.LayoutParams params;
-        ViewGroup viewGroup;
+        RootView rootView;
 
         posX = event.getX();
         posY = event.getY();
+
         offsetX = Float.valueOf(sizeString.substring(0, sizeString.indexOf(":")))/2;
         offsetY = Float.valueOf(sizeString.substring(sizeString.indexOf(":")+1))/2;
 
+        x = posX-offsetX;
+        y = posY-offsetY;
+
         switch (typeString){
-            case INDENTIFIER_BUTTON:
+            case INDENTIFIER_BUTTON://class com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable
                 //ovdje idu konstruktori i dodavanje custom viewa na plocu
                 //primjer:
+                //inicijalizacija RootViewa
+                rootView = getRootViewWithParams(x, y);
 
-                rootView rootView = new rootView(context);
-                TimelineView timelineView = new TimelineView(context, rootView);
-                OptionsTimlineAddButton OptionsTimlineAddButton = new OptionsTimlineAddButton(context, timelineView);
-                rootView.addViewToHolder(timelineView);
+                //kreiranje elemenata za glavni i options holder
+                BoardTimelineView boardTimelineView = new BoardTimelineView(context, rootView);
+                OptionsTimlineAddButton OptionsTimlineAddButton = new OptionsTimlineAddButton(context, boardTimelineView);
+
+                //dodavanje elementa u glavni i options holder
+                rootView.addViewToHolder(boardTimelineView);
                 rootView.addViewToViewOptionsHolder(OptionsTimlineAddButton);
-                mainLayout.addView(rootView);
-                params = rootView.getLayoutParams();
-                params.width = 750;
-                params.height = 350;
-                rootView.setLayoutParams(params);
-                rootView.setX(posX-offsetX);
-                rootView.setY(posY-offsetY);
                 break;
 
-            case INDENTIFIER_BUTTON2:
-                viewGroup = new rootView(context,new EditText(context));
-                mainLayout.addView(viewGroup);
-                params = viewGroup.getLayoutParams();
-                params.width = 400;
-                params.height = 400;
-                viewGroup.setLayoutParams(params);
-                viewGroup.setX(posX-offsetX);
-                viewGroup.setY(posY-offsetY);
+            case INDENTIFIER_BUTTON2://class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable
+                rootView = getRootViewWithParams(x, y);
+                BoardTextView boardTextView = new BoardTextView(context);
+
+                rootView.addViewToHolder(boardTextView);
                 break;
 
-            case INDENTIFIER_BUTTON3:
-                viewGroup = new rootView(context,new pictureView(context));
-                mainLayout.addView(viewGroup);
-                params = viewGroup.getLayoutParams();
-                params.width = 400;
-                params.height = 400;
-                viewGroup.setLayoutParams(params);
-                viewGroup.setX(posX-offsetX);
-                viewGroup.setY(posY-offsetY);
+            case INDENTIFIER_BUTTON3://class com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable
+                rootView = getRootViewWithParams(x, y);
+
+                BoardImageView boardImageView = new BoardImageView(context, getActivity());
+                OptionsImageTakePhotoButton optionsImageTakePhotoButton = new OptionsImageTakePhotoButton(getContext(),boardImageView);
+
+                rootView.addViewToHolder(boardImageView);
+                rootView.addViewToViewOptionsHolder(optionsImageTakePhotoButton);
                 break;
         }
     }
@@ -187,6 +184,20 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
             draggedView.setY(newPosY);
         }
         draggedView.setVisibility(View.VISIBLE);
+    }
+
+    private RootView getRootViewWithParams(float x, float y){
+        ViewGroup.LayoutParams params;
+        RootView rootView = new RootView(context);
+        mainLayout.addView(rootView);
+        params = rootView.getLayoutParams();
+        params.width = 350;
+        params.height = 350;
+        rootView.setLayoutParams(params);
+        rootView.setX(x);
+        rootView.setY(y);
+
+        return rootView;
     }
 
 

@@ -6,6 +6,6 @@
     android:thickness="50dp"
     android:useLevel="false">
 
-    <solid android:color="#0062ff" />
+    <solid android:color="@color/animateButton" />
 
 </shape>
