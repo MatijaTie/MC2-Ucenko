@@ -4,9 +4,10 @@
     android:shape="line">
     <stroke
         android:width="5dp"
-        android:color="#7f8184" />
+        android:color="#0a564e" />
     <size android:height="2dp" />
     <padding android:left="25dp"
         android:right="25dp"/>
+
 
 </shape>

@@ -4,9 +4,7 @@ import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import com.example.tie.mc2.OptionsToRoot;
 import com.example.tie.mc2.R;
 
 /**
