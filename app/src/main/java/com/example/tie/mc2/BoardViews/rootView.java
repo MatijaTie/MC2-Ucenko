@@ -3,6 +3,7 @@ package com.example.tie.mc2.BoardViews;
 import android.content.ClipData;
 import android.content.Context;
 import android.icu.text.UnicodeSetSpanner;
+import android.os.Build;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
@@ -31,10 +32,13 @@ public class rootView extends RelativeLayout implements View.OnTouchListener {
     private float MIN_WIDTH, MIN_HEIGHT;
     private LinearLayout viewOptionsHolder;
 
+
+    Button b1;
     //minimalne dimenzije
     {
         MIN_WIDTH = 200;
         MIN_HEIGHT = 200;
+
     }
     public rootView(Context context) {
         super(context);
@@ -71,8 +75,12 @@ public class rootView extends RelativeLayout implements View.OnTouchListener {
         });
     }
 
+
     public void addViewToHolder(View v){
         mainComponentHolder.addView(v, ViewGroup.LayoutParams.MATCH_PARENT);
+    }
+    public void addViewToViewOptionsHolder(View v){
+        viewOptionsHolder.addView(v);
     }
 
     public rootView(Context context, View v) {
@@ -172,7 +180,7 @@ public class rootView extends RelativeLayout implements View.OnTouchListener {
         } else if (dXv > (width / partNu) * (partNu - 1) && dYv > (height / partNu) * (partNu - 1)) {                              //DOLJE DESNO
             return 1;
         } else if (dXv > (width / partNu) * (partNu - 1) && dYv < (height / partNu) * (partNu - 1) && dYv > height / partNu) {       //SAMO DESNO
-            return 3;
+            return -1;
         } else {
             Log.d("touch pos", "nesto trece");
             return -1;
@@ -210,6 +218,7 @@ public class rootView extends RelativeLayout implements View.OnTouchListener {
         thisView.startDrag(data, shadowBuilder, thisView, 0);
         thisView.setVisibility(View.INVISIBLE);
     }
+
 
 
 }

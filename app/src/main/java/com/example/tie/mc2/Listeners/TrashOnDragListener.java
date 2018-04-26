@@ -27,7 +27,7 @@ public class TrashOnDragListener implements View.OnDragListener {
                 return true;
 
             case DragEvent.ACTION_DRAG_ENTERED:
-                trash.setBackgroundResource(R.drawable.delete_view);
+                trash.setBackgroundResource(R.drawable.delete_view_full);
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
                 trash.setBackgroundResource(R.drawable.delete_view_empty);

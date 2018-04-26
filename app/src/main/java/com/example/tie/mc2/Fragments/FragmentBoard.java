@@ -7,22 +7,19 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.tie.mc2.BoardViews.TimelineView;
 import com.example.tie.mc2.BoardViews.pictureView;
-import com.example.tie.mc2.Gestures.myButtonView;
+import com.example.tie.mc2.BoardViews.OptionsTimlineAddButton;
 import com.example.tie.mc2.BoardViews.rootView;
 import com.example.tie.mc2.Listeners.TrashOnDragListener;
 import com.example.tie.mc2.R;
@@ -33,8 +30,10 @@ import com.example.tie.mc2.R;
 
 public class FragmentBoard extends Fragment implements View.OnDragListener, View.OnTouchListener{
 
-    public final String INDENTIFIER_BUTTON = "class android.support.v7.widget.AppCompatButton";
-    public final String INDENTIFIER_BUTTON2 = "class android.support.v7.widget.AppCompatImageButton";
+    public final String INDENTIFIER_BUTTON = "class com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable";
+    public final String INDENTIFIER_BUTTON2 = "class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable";
+    public final String INDENTIFIER_BUTTON3 = "class com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable";
+
 
     private RelativeLayout mainLayout;
     private FrameLayout trash;
@@ -112,8 +111,10 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
                 //primjer:
 
                 rootView rootView = new rootView(context);
-                rootView.addViewToHolder(new TimelineView(context, rootView));
-
+                TimelineView timelineView = new TimelineView(context, rootView);
+                OptionsTimlineAddButton OptionsTimlineAddButton = new OptionsTimlineAddButton(context, timelineView);
+                rootView.addViewToHolder(timelineView);
+                rootView.addViewToViewOptionsHolder(OptionsTimlineAddButton);
                 mainLayout.addView(rootView);
                 params = rootView.getLayoutParams();
                 params.width = 750;
@@ -132,6 +133,18 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
                 viewGroup.setLayoutParams(params);
                 viewGroup.setX(posX-offsetX);
                 viewGroup.setY(posY-offsetY);
+                break;
+
+            case INDENTIFIER_BUTTON3:
+                viewGroup = new rootView(context,new pictureView(context));
+                mainLayout.addView(viewGroup);
+                params = viewGroup.getLayoutParams();
+                params.width = 400;
+                params.height = 400;
+                viewGroup.setLayoutParams(params);
+                viewGroup.setX(posX-offsetX);
+                viewGroup.setY(posY-offsetY);
+                break;
         }
     }
 
@@ -175,8 +188,6 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
         }
         draggedView.setVisibility(View.VISIBLE);
     }
-
-
 
 
 }

@@ -18,8 +18,10 @@ import java.util.jar.Attributes;
  * Created by Tie on 21-Apr-18.
  */
 
-public class TimelineView extends LinearLayout{
+public class TimelineView extends LinearLayout {
     TimelineView thisView;
+
+
     public TimelineView(final Context context, ViewGroup parent) {
         super(context);
         inflate(context, R.layout.component_timeline, parent);
@@ -27,22 +29,24 @@ public class TimelineView extends LinearLayout{
         //setBackgroundResource(R.drawable.component_timeline_line);
         thisView = this;
 
-        this.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TimelineViewButton newTimlineButton = new TimelineViewButton(getContext(), null);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(250, ViewGroup.LayoutParams.MATCH_PARENT);
-                params.gravity = Gravity.CENTER;
-                params.setMargins(10,10,10,10);
-                newTimlineButton.setLayoutParams(params);
-                thisView.addView(newTimlineButton);
-                thisView.bringChildToFront(newTimlineButton);
-                Toast.makeText(getContext(), ""+thisView.getChildCount(), Toast.LENGTH_SHORT).show();
 
-
-
-            }
-        });
     }
+
+    public TimelineView getTimelineView(){
+        return this;
+    }
+
+    public void addTimelineView(){
+        TimelineViewButton newTimlineButton = new TimelineViewButton(getContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(250, ViewGroup.LayoutParams.MATCH_PARENT);
+        params.gravity = Gravity.CENTER;
+        params.setMargins(10,10,10,10);
+        newTimlineButton.setLayoutParams(params);
+
+        thisView.addView(newTimlineButton);
+        thisView.bringChildToFront(newTimlineButton);
+
+    }
+
 
 }

@@ -2,13 +2,13 @@ package com.example.tie.mc2.BoardViews;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.tie.mc2.R;
 
@@ -17,22 +17,41 @@ import com.example.tie.mc2.R;
  */
 
 public class TimelineViewButton extends FrameLayout {
+    Button timelineButton;
+    private boolean isSmall;
+
     public TimelineViewButton(Context context) {
         super(context);
-        inflate(context, R.layout.proba, (ViewGroup) this);
+
+        inflate(context, R.layout.component_timline_layout,  this);
+        isSmall = false;
+        timelineButton = findViewById(R.id.timelineBtn);
+        bringToFront();
+        bringThisToFront();
+
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "klik", Toast.LENGTH_SHORT).show();
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) timelineButton.getLayoutParams();
+               if(isSmall){
+                   params.height = 100;
+                   params.width = 100;
+                   params.topMargin = 0;
+                   isSmall = false;
+               }else{
+                   params.height = 75;
+                   params.width = 75;
+                   params.topMargin = 50;
+                   isSmall = true;
+               }
+                timelineButton.setLayoutParams(params);
+            }
+        });
        // setBackgroundResource(R.drawable.component_timline_timestamp);
     }
 
-    public TimelineViewButton(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
 
-        inflate(context, R.layout.proba, (ViewGroup) this);
-    }
-
-    public TimelineViewButton(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        inflate(context, R.layout.proba, this);
-    }
 
     public void bringThisToFront(){
         bringToFront();

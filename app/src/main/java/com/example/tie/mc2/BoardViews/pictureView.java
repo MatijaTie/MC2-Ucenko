@@ -1,7 +1,6 @@
 package com.example.tie.mc2.BoardViews;
 
 import android.content.Context;
-import android.widget.ImageView;
 
 import com.example.tie.mc2.R;
 
@@ -12,7 +11,7 @@ import com.example.tie.mc2.R;
 public class pictureView extends android.support.v7.widget.AppCompatImageView {
     public pictureView(Context context) {
         super(context);
-        this.setBackgroundResource(R.drawable.ic_trash);
+        this.setBackgroundResource(R.drawable.ic_trash_full);
     }
 
 
