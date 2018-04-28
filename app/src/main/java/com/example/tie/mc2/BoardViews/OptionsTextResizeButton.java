@@ -8,16 +8,16 @@ import android.widget.LinearLayout;
 import com.example.tie.mc2.R;
 
 /**
- * Created by Tie on 26-Apr-18.
+ * Created by Tie on 28-Apr-18.
  */
 
-public class OptionsImageTakePhotoButton extends AppCompatButton {
-    final BoardImageView targetView;
+public class OptionsTextResizeButton extends AppCompatButton {
+    final BoardTextView targetView;
 
-    public OptionsImageTakePhotoButton(Context context, final BoardImageView targetView) {
+    public OptionsTextResizeButton(Context context, final BoardTextView targetView) {
         super(context);
         this.targetView = targetView;
-        setBackgroundResource(R.drawable.options_image_takephoto);
+        setBackgroundResource(R.drawable.options_text_size);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
         params.setMargins(0,0,0,10);
         this.setLayoutParams(params);
@@ -25,8 +25,7 @@ public class OptionsImageTakePhotoButton extends AppCompatButton {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                targetView.takePicture();
-
+                targetView.callTextDialogue();
             }
         });
     }

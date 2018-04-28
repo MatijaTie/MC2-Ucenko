@@ -4,14 +4,14 @@
         <shape android:shape="rectangle">
             <solid android:color="@color/optionsButtons"/>
             <corners android:bottomRightRadius="50dp" android:topRightRadius="50dp"
-               />
+                />
         </shape> <shape android:shape="rectangle">
         <solid android:color="@color/colorAccent"/>
 
     </shape>
     </item>
     <item
-        android:drawable="@drawable/ic_options_timeline_add"
+        android:drawable="@drawable/ic_options_image_folder"
         android:right="10dp"
         android:top="10dp"
         android:bottom="10dp"

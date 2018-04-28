@@ -23,7 +23,7 @@ import com.example.tie.mc2.R;
  */
 
 public class RootView extends RelativeLayout implements View.OnTouchListener {
-    private GestureDetector gestureEvent;
+
     private RelativeLayout thisView;
     private FrameLayout mainComponentHolder;
     private Button moveButton;
@@ -33,7 +33,6 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
     private LinearLayout viewOptionsHolder;
 
 
-    Button b1;
     //minimalne dimenzije
     {
         MIN_WIDTH = 200;
@@ -73,6 +72,9 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
                 return true;
             }
         });
+
+        this.setFocusableInTouchMode(true);
+
     }
 
 
@@ -104,6 +106,15 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
                 return true;
         }
         return true;
+    }
+
+    public void setBorders(){
+        FrameLayout layout = findViewById(R.id.view_main_frame);
+        if(layout.getBackground() != null){
+            layout.setBackground(null);
+        }else{
+            layout.setBackgroundResource(R.drawable.component_background);
+        }
     }
 
     /*

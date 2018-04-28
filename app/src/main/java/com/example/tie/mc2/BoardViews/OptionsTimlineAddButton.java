@@ -18,7 +18,7 @@ public class OptionsTimlineAddButton extends android.support.v7.widget.AppCompat
         this.targetView = targetView;
         setBackgroundResource(R.drawable.options_timeline_add_button);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
-        params.setMargins(0,15,0,15);
+        params.setMargins(0,0,0,10);
         this.setLayoutParams(params);
 
         setOnClickListener(new OnClickListener() {

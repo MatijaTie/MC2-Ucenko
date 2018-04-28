@@ -3,8 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#3bbf67</color>
+    <color name="optionsBorderButtonColor">#fc7d2e</color>
     <color name="board">#dddddd</color>
     <color name="optionsButtons">#ff5454</color>
     <color name="animateButton">#bababa</color>
     <color name="draggButton">#bababa</color>
+    <color name="borderColor">#316823</color>
 </resources>

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MC2</string>
+    <string name="dialogue_text_standardtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
 </resources>
