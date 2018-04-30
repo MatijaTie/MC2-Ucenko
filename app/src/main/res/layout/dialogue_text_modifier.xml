@@ -7,54 +7,125 @@
     android:layout_marginRight="20dp"
     android:layout_marginLeft="20dp"
     android:layout_marginBottom="25dp"
-
     >
 
 
     <TextView
         android:id="@+id/dialogue_text_text"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="120dp"
         android:text="@string/dialogue_text_standardtext"
         android:gravity="center"
         />
 
     <SeekBar
-        android:id="@+id/seekBar"
+        android:id="@+id/dialogue_text_seek_bar1"
         android:paddingTop="35dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="400dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        />
+    <SeekBar
+        android:id="@+id/dialogue_text_seek_bar2"
+        android:paddingTop="35dp"
+        android:layout_width="400dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        />
+    <SeekBar
+        android:id="@+id/dialogue_text_seek_bar3"
+        android:paddingTop="35dp"
+        android:layout_width="400dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="0dp"
+
         >
 
-        <View
-            android:id="@+id/dialogue_text_textcolor"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="50dp"
-            android:background="@drawable/ic_options_text_resize"
-            ></View>
 
-        <View
-            android:id="@+id/dialogue_text_backgroundcolor"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="50dp"
-            android:background="@drawable/ic_options_image_folder"></View>
+        <LinearLayout
+        android:paddingTop="35dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+            <FrameLayout
+                android:id="@+id/dialogue_text_textsize_holder"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="25dp"
+                android:layout_height="wrap_content">
+                <View
+                    android:id="@+id/dialogue_text_textsize"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/ic_dialogue_options_textsize"
+                    />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_marginRight="25dp"
+                android:id="@+id/dialogue_text_textcolor_holder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <View
+                    android:id="@+id/dialogue_text_textcolor"
+                    android:layout_margin="15dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/ic_dialogue_options_textcolor"
+
+                   />
+            </FrameLayout>
+
+
+
+            <FrameLayout
+                android:id="@+id/dialogue_text_backgroundcolor_holder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <View
+                    android:id="@+id/dialogue_text_backgroundcolor"
+                    android:layout_margin="15dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/ic_dialogue_options_background"
+                    />
+            </FrameLayout>
+
+
+
+
+
     </LinearLayout>
+
+
+    </LinearLayout>
+    <CheckBox
+        android:id="@+id/dialogue_transparent_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:layout_marginTop="15dp"
+        android:fontFamily="sans-serif"
+        android:layout_weight="1"
+        android:text="Prozirna pozadina" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="right"
+        android:layout_marginTop="25dp"
 
         >
 
@@ -63,16 +134,15 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="50dp"
-            android:layout_marginTop="50dp"
             android:background="@drawable/ic_dialogue_cancel"
-            ></Button>
+            />
 
         <Button
             android:id="@+id/dialogue_text_ok_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginTop="50dp"
-            android:background="@drawable/ic_dialogue_ok"/>
+            android:background="@drawable/ic_dialogue_ok"
+            />
     </LinearLayout>
 
 </LinearLayout>
