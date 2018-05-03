@@ -21,7 +21,7 @@
         android:layout_height="50dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/dragg_view_background"
+        android:background="@drawable/root_view_dragg_background"
 
         />
 

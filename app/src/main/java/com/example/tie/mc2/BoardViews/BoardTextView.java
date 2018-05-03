@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.widget.TextViewCompat;
+import android.text.Editable;
 import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -39,6 +40,15 @@ public class BoardTextView extends android.support.v7.widget.AppCompatEditText {
 
     }
 
+    public int getEnteredTextSize() {
+        return textSize;
+    }
+
+    public String getEnteredText(){
+        this.text = getText().toString();
+        return text;
+    }
+
     public void callTextDialogue() {
         TextChangeDialogue dialogue = new TextChangeDialogue(getContext(), this);
         dialogue.show();
@@ -67,7 +77,7 @@ public class BoardTextView extends android.support.v7.widget.AppCompatEditText {
         this.textColor = textColor;
     }
 
-    public int getBackgroundColor() {
+    public int getEnteredBackgroundColor() {
 
         return backgroundColor;
     }

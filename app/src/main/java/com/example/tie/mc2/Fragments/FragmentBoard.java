@@ -20,27 +20,28 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.tie.mc2.BoardViews.BoardTextView;
 import com.example.tie.mc2.BoardViews.BoardTimelineView;
 import com.example.tie.mc2.BoardViews.BoardImageView;
-import com.example.tie.mc2.BoardViews.OptionsAllBorderButton;
-import com.example.tie.mc2.BoardViews.OptionsImageFolderButton;
-import com.example.tie.mc2.BoardViews.OptionsImageTakePhotoButton;
-import com.example.tie.mc2.BoardViews.OptionsTextResizeButton;
-import com.example.tie.mc2.BoardViews.OptionsTimlineAddButton;
+import com.example.tie.mc2.OptionButtons.OptionsAllBorderButton;
+import com.example.tie.mc2.OptionButtons.OptionsImageFolderButton;
+import com.example.tie.mc2.OptionButtons.OptionsImageTakePhotoButton;
+import com.example.tie.mc2.OptionButtons.OptionsTextResizeButton;
+import com.example.tie.mc2.OptionButtons.OptionsTimlineAddButton;
 import com.example.tie.mc2.BoardViews.RootView;
 import com.example.tie.mc2.Listeners.TrashOnDragListener;
 import com.example.tie.mc2.R;
-import com.example.tie.mc2.ToolbarComponents.TextComponentDraggable;
 
-import java.io.FileNotFoundException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
-import static com.example.tie.mc2.MainActivity.CAMERA_REQUEST;
-import static com.example.tie.mc2.MainActivity.IMAGE_REQUEST;
+import static com.example.tie.mc2.Activities.BoardActivity.CAMERA_REQUEST;
+import static com.example.tie.mc2.Activities.BoardActivity.IMAGE_REQUEST;
 
 
 /**
@@ -49,9 +50,9 @@ import static com.example.tie.mc2.MainActivity.IMAGE_REQUEST;
 
 public class FragmentBoard extends Fragment implements View.OnDragListener, View.OnTouchListener{
 
-    public final String INDENTIFIER_BUTTON = "class com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable";
-    public final String INDENTIFIER_BUTTON2 = "class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable";
-    public final String INDENTIFIER_BUTTON3 = "class com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable";
+    public final String INDENTIFIER_TIMELINE = "class com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable";
+    public final String INDENTIFIER_TEXT = "class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable";
+    public final String INDENTIFIER_IMAGE = "class com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable";
 
     private BoardImageView lastImageView;
     public Bitmap lastimageBitmap;
@@ -60,7 +61,11 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
     private Fragment fragment;
     private FrameLayout trash;
     private Context context;
+    private View save;
     Point point;
+
+    private ArrayList<RootView> childRootViews;
+
 
 
     @Nullable
@@ -72,6 +77,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
         context = getActivity();
         this.mainLayout = mainLayout;
         this.fragment = this;
+        childRootViews = new ArrayList<>();
         return mainLayout;
 
     }
@@ -80,7 +86,14 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         trash = view.findViewById(R.id.trash);
         trash.bringToFront();
-        trash.setOnDragListener(new TrashOnDragListener(trash));
+        trash.setOnDragListener(new TrashOnDragListener(trash, this));
+        save = view.findViewById(R.id.main_save);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ispisi();
+            }
+        });
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -152,7 +165,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
         y = posY-offsetY;
 
         switch (typeString){
-            case INDENTIFIER_BUTTON://class com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable
+            case INDENTIFIER_TIMELINE://class com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable
                 //ovdje idu konstruktori i dodavanje custom viewa na plocu
                 //primjer:
                 //inicijalizacija RootViewa
@@ -167,9 +180,10 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
                 rootView.addViewToViewOptionsHolder(OptionsTimlineAddButton);
 
                 rootView.addViewToHolder(boardTimelineView);
+                childRootViews.add(rootView);
                 break;
 
-            case INDENTIFIER_BUTTON2://class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable
+            case INDENTIFIER_TEXT://class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable
                 rootView = getRootViewWithParams(x, y);
                 BoardTextView boardTextView = new BoardTextView(context);
 
@@ -179,10 +193,10 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
                 rootView.addViewToViewOptionsHolder(optionsAllBorderButton2);
                 rootView.addViewToHolder(boardTextView);
                 rootView.addViewToViewOptionsHolder(optionsTextResizeButton);
-
+                childRootViews.add(rootView);
                 break;
 
-            case INDENTIFIER_BUTTON3://class com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable
+            case INDENTIFIER_IMAGE://class com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable
                 rootView = getRootViewWithParams(x, y);
 
                 BoardImageView boardImageView = new BoardImageView(context, this);
@@ -194,6 +208,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
                 rootView.addViewToHolder(boardImageView);
                 rootView.addViewToViewOptionsHolder(optionsImageTakePhotoButton);
                 rootView.addViewToViewOptionsHolder(optionsImageFolderButton);
+                childRootViews.add(rootView);
 
                 break;
         }
@@ -286,6 +301,74 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
         return rootView;
     }
 
+    public void ispisi(){
+        int counter = 0;
+        float posX, posY;
+        String holderClass;
+        JSONObject Jroot = new JSONObject();
+
+        for(RootView r : childRootViews){
+            Log.d("ispis", ""+r.getMainView().getClass());
+            Log.d("ispis", "x:"+r.getX());
+            Log.d("ispis", "y:"+r.getY());
+
+            try{
+
+                posX = r.getX();
+                posY = r.getY();
+
+                JSONObject JrootView = new JSONObject();
+
+                holderClass = r.getMainView().getClass().toString();
+
+                JrootView.put("class", holderClass);
+                JrootView.put("posx", posX);
+                JrootView.put("posy", posY);
+
+
+                Jroot.put("view"+counter, JrootView);
+
+                counter++;
+
+                switch (holderClass){
+                    case "class com.example.tie.mc2.BoardViews.BoardTextView":
+
+                        JSONObject childObjectData = new JSONObject();
+                        BoardTextView v = (BoardTextView) r.getMainView();
+                        Log.d("INDENTIFIER_TEXT", ""+v.getText());
+                        childObjectData.put("text", v.getText());
+                        childObjectData.put("textSize", v.getCustomTextSize());
+                        childObjectData.put("background",v.getEnteredBackgroundColor());
+                        JrootView.put("child", childObjectData);
+
+                        break;
+                    case "class com.example.tie.mc2.BoardViews.BoardImageView":
+                        JSONObject childObjectData2 = new JSONObject();
+                        BoardImageView v2 = (BoardImageView) r.getMainView();
+                        childObjectData2.put("image", v2.getImageEncoded());
+                        JrootView.put("child", childObjectData2);
+                        break;
+
+                    case INDENTIFIER_TIMELINE:
+
+                        break;
+                }
+                Log.d("ispis", ""+Jroot.toString());
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public void removeViewFromList(View v){
+        for(View view : childRootViews){
+            if(view.equals(v)){
+                childRootViews.remove(v);
+                break;
+            }
+        }
+    }
 
 
 }

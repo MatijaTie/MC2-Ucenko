@@ -9,4 +9,6 @@
     <color name="animateButton">#bababa</color>
     <color name="draggButton">#bababa</color>
     <color name="borderColor">#316823</color>
+    <color name="menuTextBackground">#3ce055</color>
+    <color name="menuTextColor">#ffffff</color>
 </resources>

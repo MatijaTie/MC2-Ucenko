@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.tie.mc2.Gestures.myButtonView;
+
 import com.example.tie.mc2.Listeners.ToolbarIconsTouchListener;
 import com.example.tie.mc2.R;
 import com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable;

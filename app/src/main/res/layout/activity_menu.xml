@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_menu_main_background"
+    android:layout_margin="15dp"
+    >
+    <LinearLayout android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="-30dp"
+        >
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+        </FrameLayout>
+
+        <LinearLayout
+
+            android:id="@+id/menu_nova_ploca_button"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            >
+
+            <View
+                android:layout_gravity="center"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/menu_new_board_image"
+                android:translationZ="1dp"
+                />
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="80dp"
+                android:text="@string/menu_nova_ploca"
+                android:textSize="30sp"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:layout_marginStart="-25dp"
+                android:background="@drawable/menu_board_background"
+                android:textColor="@color/menuTextColor"
+
+                />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/menu_otvori_plocu_button"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+
+            >
+
+            <View
+                android:layout_gravity="center"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/menu_load_board_image"
+                android:translationZ="1dp"
+                />
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="80dp"
+                android:text="@string/menu_load_ploca"
+                android:textSize="30sp"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:layout_marginStart="-25dp"
+                android:background="@drawable/menu_board_background"
+                android:textColor="@color/menuTextColor"
+                />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/menu_options"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+
+            >
+
+            <View
+                android:layout_gravity="center"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/menu_options_image"
+                android:translationZ="1dp"
+                />
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="80dp"
+                android:text="@string/menu_postavke"
+                android:textSize="30sp"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:layout_marginStart="-25dp"
+                android:background="@drawable/menu_board_background"
+                android:textColor="@color/menuTextColor"
+                />
+        </LinearLayout>
+
+
+
+
+
+
+
+    </LinearLayout>
+
+</FrameLayout>
+

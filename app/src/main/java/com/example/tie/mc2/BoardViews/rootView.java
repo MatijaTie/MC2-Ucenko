@@ -23,11 +23,11 @@ import com.example.tie.mc2.R;
  */
 
 public class RootView extends RelativeLayout implements View.OnTouchListener {
-
     private RelativeLayout thisView;
+    private View mainView;
+
     private FrameLayout mainComponentHolder;
     private Button moveButton;
-    private float dX, dY;
     private boolean touchFlag;
     private float MIN_WIDTH, MIN_HEIGHT;
     private LinearLayout viewOptionsHolder;
@@ -80,11 +80,11 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
 
     public void addViewToHolder(View v){
         mainComponentHolder.addView(v, ViewGroup.LayoutParams.MATCH_PARENT);
+        mainView = v;
     }
     public void addViewToViewOptionsHolder(View v){
         viewOptionsHolder.addView(v);
     }
-
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -192,6 +192,10 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
                 thisView);
         thisView.startDrag(data, shadowBuilder, thisView, 0);
         thisView.setVisibility(View.INVISIBLE);
+    }
+
+    public View getMainView() {
+        return mainView;
     }
 
 

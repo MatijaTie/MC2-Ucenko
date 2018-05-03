@@ -55,7 +55,7 @@ public class TextChangeDialogue extends Dialog{
         super(context);
         this.textSize = targetView.getCustomTextSize();
         this.textColor = targetView.getTextColor();
-        this.backgroundColor = targetView.getBackgroundColor();
+        this.backgroundColor = targetView.getEnteredBackgroundColor();
         this.targetView = targetView;
 
     }

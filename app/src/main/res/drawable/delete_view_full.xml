@@ -10,7 +10,7 @@
         </shape>
     </item>
     <item
-        android:drawable="@drawable/ic_trash_full"
+        android:drawable="@drawable/ic_board_trash_full"
         android:bottom="25dp"
         android:left="25dp"
         android:right="5dp"

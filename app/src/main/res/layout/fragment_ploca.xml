@@ -9,13 +9,41 @@
     >
     <FrameLayout
         android:id="@+id/trash"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/delete_view_empty"
 
         ></FrameLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_below="@+id/trash"
+        android:layout_alignParentEnd="true"
+        android:padding="10dp"
+
+        android:background="@drawable/board_options_background"
+
+        >
+
+        <View
+            android:id="@+id/main_save"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+
+            android:layout_gravity="center"
+
+
+            android:background="@drawable/ic_board_save"
+
+
+            />
+
+    </LinearLayout>
+
 
 
 
