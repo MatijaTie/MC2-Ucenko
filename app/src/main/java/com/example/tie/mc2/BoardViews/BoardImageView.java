@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 public class BoardImageView extends AppCompatImageView{
     FragmentBoard parentFragment;
     String imageEncoded;
+    Bitmap img;
 
     public BoardImageView(Context context, FragmentBoard parentFragment) {
         super(context);
@@ -32,12 +33,18 @@ public class BoardImageView extends AppCompatImageView{
     }
 
     public void setImage(Bitmap image){
+        img = image;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] b = baos.toByteArray();
         imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
         setImageBitmap(image);
     }
+
+    public Bitmap getImgx(){
+        return img;
+    }
+
 
     public String getImageEncoded() {
         return imageEncoded;

@@ -53,8 +53,8 @@ public class TextChangeDialogue extends Dialog{
 
     public TextChangeDialogue(@NonNull Context context, BoardTextView targetView) {
         super(context);
-        this.textSize = targetView.getCustomTextSize();
-        this.textColor = targetView.getTextColor();
+        this.textSize = (int) targetView.getCustomTextSize();
+        this.textColor = targetView.getCurrentTextColor();
         this.backgroundColor = targetView.getEnteredBackgroundColor();
         this.targetView = targetView;
 

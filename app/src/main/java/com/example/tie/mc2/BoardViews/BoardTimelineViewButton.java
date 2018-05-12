@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import com.example.tie.mc2.R;
 
 public class BoardTimelineViewButton extends FrameLayout {
     Button timelineButton;
+    EditText textPart, yearPart;
     private boolean isSmall;
 
     public BoardTimelineViewButton(Context context) {
@@ -29,8 +31,25 @@ public class BoardTimelineViewButton extends FrameLayout {
         bringToFront();
         bringThisToFront();
 
+        textPart = findViewById(R.id.board_timeline_part_text);
+        yearPart = findViewById(R.id.board_timeline_part_year);
     }
 
+    public String getTextPart(){
+        return textPart.getText().toString();
+    }
+
+    public String getYearPart(){
+        return yearPart.getText().toString();
+    }
+
+    public void setYearPart(String year){
+        yearPart.setText(year);
+    }
+
+    public void setTextPart(String text){
+        textPart.setText(text);
+    }
 
 
     public void bringThisToFront(){

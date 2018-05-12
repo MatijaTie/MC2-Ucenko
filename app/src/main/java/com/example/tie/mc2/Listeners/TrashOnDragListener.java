@@ -41,7 +41,7 @@ public class TrashOnDragListener implements View.OnDragListener {
 
                 View deleteView = (View) event.getLocalState();
                 ViewGroup owner = (ViewGroup) deleteView.getParent();
-                if(owner.getId() == R.id.fragment_ploca_layout) {
+                if(owner.getId() == R.id.board_finished) {
                     owner.removeView(deleteView);
                     trash.setBackgroundResource(R.drawable.delete_view_empty);
                     parentFragment.removeViewFromList(deleteView);

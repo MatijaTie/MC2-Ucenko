@@ -7,7 +7,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,11 +22,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.tie.mc2.BoardViews.BoardTextView;
 import com.example.tie.mc2.BoardViews.BoardTimelineView;
 import com.example.tie.mc2.BoardViews.BoardImageView;
+import com.example.tie.mc2.BoardViews.BoardTimelineViewButton;
 import com.example.tie.mc2.OptionButtons.OptionsAllBorderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageFolderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageTakePhotoButton;
@@ -32,13 +39,20 @@ import com.example.tie.mc2.OptionButtons.OptionsTimlineAddButton;
 import com.example.tie.mc2.BoardViews.RootView;
 import com.example.tie.mc2.Listeners.TrashOnDragListener;
 import com.example.tie.mc2.R;
+import com.example.tie.mc2.BoardViews.ViewBuilder;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import static com.example.tie.mc2.Activities.BoardActivity.CAMERA_REQUEST;
 import static com.example.tie.mc2.Activities.BoardActivity.IMAGE_REQUEST;
@@ -56,51 +70,148 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
 
     private BoardImageView lastImageView;
     public Bitmap lastimageBitmap;
-
+    private ProgressBar progressBarLine;
+    private LinearLayout loadingScreen;
+    private RelativeLayout boardMain;
     private RelativeLayout mainLayout;
-    private Fragment fragment;
-    private FrameLayout trash;
+    private JSONObject Jroot;
+    private FragmentBoard fragment;
     private Context context;
-    private View save;
     Point point;
 
     private ArrayList<RootView> childRootViews;
 
-
+    public static FragmentBoard newInstance(Uri uri){
+        if(uri != null){
+            Bundle bundle = new Bundle();
+            bundle.putString("uriString" , uri.toString());
+            Log.d("newInstance", uri.toString());
+            FragmentBoard fragmentBoard = new FragmentBoard();
+            fragmentBoard.setArguments(bundle);
+            return fragmentBoard;
+        }
+        return new FragmentBoard();
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final RelativeLayout mainLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_ploca, container, false);
-        mainLayout.setOnDragListener(this);
-        mainLayout.setOnTouchListener(this);
+        boardMain = (RelativeLayout) inflater.inflate(R.layout.fragment_ploca, container, false);
+
         context = getActivity();
-        this.mainLayout = mainLayout;
         this.fragment = this;
         childRootViews = new ArrayList<>();
-        return mainLayout;
+        return boardMain;
 
+    }
+
+    public void addTochildContainer(RootView rootView){
+        childRootViews.add(rootView);
+    }
+    public RelativeLayout getMainLayout(){
+        return mainLayout;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        trash = view.findViewById(R.id.trash);
+        mainLayout = view.findViewById(R.id.board_finished);
+        mainLayout.setOnDragListener(this);
+        mainLayout.setOnTouchListener(this);
+
+        FrameLayout trash = view.findViewById(R.id.trash);
         trash.bringToFront();
         trash.setOnDragListener(new TrashOnDragListener(trash, this));
-        save = view.findViewById(R.id.main_save);
+
+        loadingScreen = view.findViewById(R.id.board_loading_layout);
+        progressBarLine = view.findViewById(R.id.progressBarLine);
+
+        View save = view.findViewById(R.id.main_save);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ispisi();
+                new SaveStateTask().execute("");
             }
         });
+
+
+        Bundle args = getArguments();
+        if(args != null && args.getString("uriString") != null){
+            Uri uri = Uri.parse(args.getString("uriString"));
+            new LoadingTask().execute(uri);
+        }else{
+            loadingScreen.setVisibility(View.GONE);
+        }
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private class LoadingTask extends AsyncTask<Uri, Integer, RelativeLayout> {
+        int i = 0;
+
+        @Override
+        protected void onPreExecute() {
+            mainLayout.setVisibility(View.INVISIBLE);
+            progressBarLine.setProgress(0);
+        }
+
+        @Override
+        protected void onPostExecute(RelativeLayout relativeLayout) {
+            loadingScreen.setVisibility(View.GONE);
+            mainLayout.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            progressBarLine.setProgress(values[0]);
+            i++;
+        }
+
+        @Override
+        protected RelativeLayout doInBackground(Uri... uris) {
+            String jsonString;
+            InputStream inputStream;
+            try{
+                StringWriter writer = new StringWriter();
+                inputStream = context.getContentResolver().openInputStream(uris[0]);
+                IOUtils.copy(inputStream, writer, Charset.defaultCharset());
+                jsonString = writer.toString();
+                inputStream.close();
+
+                JSONObject object = new JSONObject(jsonString);
+
+                Iterator<String> iterator = object.keys();
+                Iterator<String> counter = object.keys();
+                double itemCount = 0;
+                while (counter.hasNext()){
+                    counter.next();
+                    itemCount++;
+                }
+
+                ViewBuilder viewBuilder = new ViewBuilder(context, mainLayout);
+                double multiplyer = 0;
+                while (iterator.hasNext()){
+                    String key = iterator.next();
+                    multiplyer++;
+                    JSONObject jView = (JSONObject) object.get(key);
+                    final RootView newView = viewBuilder.buildView(jView);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainLayout.addView(newView);
+                            childRootViews.add(newView);
+                        }
+                    });
+                    publishProgress((int)Math.ceil(100.00/itemCount*multiplyer));
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     public static Point getTouchPositionFromDragEvent(View item, DragEvent event) {
         Rect rItem = new Rect();
         item.getGlobalVisibleRect(rItem);
-
         return new Point(rItem.left + Math.round(event.getX()), rItem.top + Math.round(event.getY()));
     }
 
@@ -131,6 +242,54 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
         }
         return true;
     }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_UP:
+                //Toast.makeText(getContext(), "action up", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case MotionEvent.ACTION_DOWN:
+                removeSoftKeyboard(v);
+                return true;
+
+        }
+        return false;
+    }
+
+    //hvatanje slike
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+
+        if(requestCode == CAMERA_REQUEST && data != null){
+            Bundle extras = data.getExtras();
+            if (extras != null) {
+                lastimageBitmap = (Bitmap) extras.get("data");
+                lastImageView.setImage(lastimageBitmap);
+            }
+
+
+        }else if(requestCode == IMAGE_REQUEST && data != null){
+            InputStream stream;
+            try {
+                stream = context.getContentResolver().openInputStream(
+                        data.getData());
+                lastimageBitmap = BitmapFactory.decodeStream(stream);
+                stream.close();
+                lastImageView.setImage(lastimageBitmap);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //save file intent
+        }else if(requestCode == 0202 && data != null){
+            Uri uri = data.getData();
+            Log.d("0202",""+uri.getPath());
+            writeFile(data.getData(), Jroot.toString());
+        }
+    }
+
 
     public void takePicture(BoardImageView boardImageView){
         lastImageView = boardImageView;
@@ -214,53 +373,6 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
         }
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()){
-            case MotionEvent.ACTION_UP:
-                //Toast.makeText(getContext(), "action up", Toast.LENGTH_SHORT).show();
-                return true;
-
-            case MotionEvent.ACTION_DOWN:
-                removeSoftKeyboard(v);
-                return true;
-
-        }
-        return false;
-    }
-
-    //hvatanje slike
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-
-        if(requestCode == CAMERA_REQUEST && data != null){
-            Bundle extras = data.getExtras();
-            if(lastimageBitmap != null){
-                lastimageBitmap.recycle();
-            }
-
-            lastimageBitmap = (Bitmap) extras.get("data");
-            lastImageView.setImage(lastimageBitmap);
-
-        }else if(requestCode == IMAGE_REQUEST && data != null){
-            if(lastimageBitmap != null){
-                lastimageBitmap.recycle();
-            }
-            InputStream stream;
-            try {
-                stream = context.getContentResolver().openInputStream(
-                        data.getData());
-
-                 lastimageBitmap = BitmapFactory.decodeStream(stream);
-                 stream.close();
-                 lastImageView.setImage(lastimageBitmap);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void removeSoftKeyboard(View v){
         InputMethodManager inputMethodManager =(InputMethodManager)getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (inputMethodManager != null) {
@@ -270,21 +382,24 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
 
     public void setDraggedViewLocation(View draggedView, Point point) {
         int newPosX, newPosY;
-        newPosX = point.x - mainLayout.getWidth() / 15 - draggedView.getWidth() / 2;
-        newPosY = point.y - draggedView.getHeight() / 2 - 45;
+        if(mainLayout != null && draggedView != null){
+            newPosX = point.x - mainLayout.getWidth() / 15 - draggedView.getWidth() / 2;
+            newPosY = point.y - draggedView.getHeight() / 2 - 45;
 
-        if(newPosX < 0) {
-            draggedView.setX(0);
-        }else {
-            draggedView.setX(newPosX);
+            if(newPosX < 0) {
+                draggedView.setX(0);
+            }else {
+                draggedView.setX(newPosX);
+            }
+
+            if(newPosY < 0){
+                draggedView.setY(0);
+            }else{
+                draggedView.setY(newPosY);
+            }
+            draggedView.setVisibility(View.VISIBLE);
         }
 
-        if(newPosY < 0){
-            draggedView.setY(0);
-        }else{
-            draggedView.setY(newPosY);
-        }
-        draggedView.setVisibility(View.VISIBLE);
     }
 
     private RootView getRootViewWithParams(float x, float y){
@@ -301,46 +416,51 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
         return rootView;
     }
 
-    public void ispisi(){
+    private class SaveStateTask extends AsyncTask<String, Integer, String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+            writeToJson();
+            return null;
+        }
+    }
+    public void writeToJson(){
         int counter = 0;
-        float posX, posY;
+        int posX, posY;
+        int width, height;
         String holderClass;
-        JSONObject Jroot = new JSONObject();
+        Jroot = new JSONObject();
 
         for(RootView r : childRootViews){
-            Log.d("ispis", ""+r.getMainView().getClass());
+            //Log.d("ispis", ""+r.getMainView().getClass());
             Log.d("ispis", "x:"+r.getX());
             Log.d("ispis", "y:"+r.getY());
 
             try{
+                posX = (int) r.getX();
+                posY = (int) r.getY();
 
-                posX = r.getX();
-                posY = r.getY();
-
-                JSONObject JrootView = new JSONObject();
+                width = r.getWidth();
+                height = r.getHeight();
 
                 holderClass = r.getMainView().getClass().toString();
+
+                JSONObject JrootView = new JSONObject();
 
                 JrootView.put("class", holderClass);
                 JrootView.put("posx", posX);
                 JrootView.put("posy", posY);
-
-
-                Jroot.put("view"+counter, JrootView);
-
-                counter++;
-
+                JrootView.put("width",width);
+                JrootView.put("height",height);
                 switch (holderClass){
                     case "class com.example.tie.mc2.BoardViews.BoardTextView":
-
                         JSONObject childObjectData = new JSONObject();
                         BoardTextView v = (BoardTextView) r.getMainView();
-                        Log.d("INDENTIFIER_TEXT", ""+v.getText());
                         childObjectData.put("text", v.getText());
                         childObjectData.put("textSize", v.getCustomTextSize());
                         childObjectData.put("background",v.getEnteredBackgroundColor());
+                        childObjectData.put("textColor",v.getCurrentTextColor());
                         JrootView.put("child", childObjectData);
-
                         break;
                     case "class com.example.tie.mc2.BoardViews.BoardImageView":
                         JSONObject childObjectData2 = new JSONObject();
@@ -349,16 +469,56 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
                         JrootView.put("child", childObjectData2);
                         break;
 
-                    case INDENTIFIER_TIMELINE:
+                    case "class com.example.tie.mc2.BoardViews.BoardTimelineView":
 
+                        JSONObject childObjectData3 = new JSONObject();
+                        BoardTimelineView v3 = (BoardTimelineView)r.getMainView();
+                        int no = 0;
+                        ArrayList<BoardTimelineViewButton> timelineComponents = v3.getChildHolder();
+
+                        for(BoardTimelineViewButton b : timelineComponents){
+                            JSONObject timelineObjectData = new JSONObject();
+                            timelineObjectData.put("textPart",b.getTextPart());
+                            timelineObjectData.put("yearPart",b.getYearPart());
+                            childObjectData3.put("timelinePart"+no, timelineObjectData);
+                            no++;
+                        }
+                        JrootView.put("child",childObjectData3);
+                        Log.d("jsonamo chobj3",JrootView.toString());
                         break;
                 }
-                Log.d("ispis", ""+Jroot.toString());
+                Jroot.put("view"+counter, JrootView);
+                Log.d("jsonamo jroot",Jroot.toString());
+                counter++;
             }catch (JSONException e){
                 e.printStackTrace();
             }
 
         }
+        Log.d("ispis", ""+Jroot.toString());
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.setType("application/.tie");
+        startActivityForResult(intent, 0202);
+    }
+
+
+
+    public void writeFile(Uri location,  String data){
+        String locationStr = DocumentsContract.getDocumentId(location);
+        Log.d("location string uri", locationStr);
+
+        String dataStr = data;
+        OutputStream outputStream;
+        try{
+            outputStream = context.getContentResolver().openOutputStream(location);
+            //outputStream.write(data.getBytes(Charset.defaultCharset()));
+
+            outputStream.flush();
+            outputStream.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     public void removeViewFromList(View v){

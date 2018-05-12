@@ -20,17 +20,13 @@ import com.example.tie.mc2.Dialogues.TextChangeDialogue;
  */
 
 public class BoardTextView extends android.support.v7.widget.AppCompatEditText {
-    RelativeLayout.LayoutParams params;
-    String text;                        //kod skupljanja podataka text = this.getText()
     int textSize, backgroundColor, textColor;
 
     public BoardTextView(Context context) {
         super(context);
         setTypeface(Typeface.SERIF);
         setGravity(Gravity.START);
-
-        textColor = getCurrentTextColor();
-        textSize = (int) pixelsToSp(getContext(),getTextSize());
+        setPadding(0,0,0,0);
 
         Drawable background = this.getBackground();
         if (background instanceof ColorDrawable) {
@@ -38,15 +34,6 @@ public class BoardTextView extends android.support.v7.widget.AppCompatEditText {
             backgroundColor = color;
         }
 
-    }
-
-    public int getEnteredTextSize() {
-        return textSize;
-    }
-
-    public String getEnteredText(){
-        this.text = getText().toString();
-        return text;
     }
 
     public void callTextDialogue() {
@@ -59,9 +46,8 @@ public class BoardTextView extends android.support.v7.widget.AppCompatEditText {
         return px/scaledDensity;
     }
 
-
-    public int getCustomTextSize() {
-        return textSize;
+    public float getCustomTextSize() {
+        return pixelsToSp(getContext(), getTextSize());
     }
 
     public void setCustomTextSize(int textSize) {
@@ -78,12 +64,13 @@ public class BoardTextView extends android.support.v7.widget.AppCompatEditText {
     }
 
     public int getEnteredBackgroundColor() {
-
-        return backgroundColor;
+        Drawable background = this.getBackground();
+        if (background instanceof ColorDrawable) {
+            int color = ((ColorDrawable) background).getColor();
+            return color;
+        }
+        return Color.TRANSPARENT;
     }
 
-    public int getTextColor() {
-        return textColor;
-    }
 }
 
