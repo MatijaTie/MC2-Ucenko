@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_height="wrap_content" android:layout_width="600dp"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogue_color_main_layout"
+    android:layout_marginTop="25dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginBottom="25dp"
+    >
+
+
+    <TextView
+        android:id="@+id/dialogue_color_show"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:gravity="center"
+        />
+
+    <SeekBar
+        android:id="@+id/dialogue_color_seek_bar1"
+        android:paddingTop="35dp"
+        android:layout_width="400dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        />
+    <SeekBar
+        android:id="@+id/dialogue_color_seek_bar2"
+        android:paddingTop="35dp"
+        android:layout_width="400dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        />
+    <SeekBar
+        android:id="@+id/dialogue_color_seek_bar3"
+        android:paddingTop="35dp"
+        android:layout_width="400dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="0dp"
+
+        >
+
+
+        <LinearLayout
+            android:paddingTop="35dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <FrameLayout
+                android:id="@+id/dialogue_text_textsize_holder"
+                android:layout_width="wrap_content"
+
+                android:layout_height="wrap_content">
+                <View
+                    android:id="@+id/dialogue_text_textsize"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/ic_paint_palette"
+                    />
+            </FrameLayout>
+
+
+
+
+
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:layout_marginTop="25dp"
+
+        >
+
+        <Button
+            android:id="@+id/dialogue_color_cancel_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginRight="50dp"
+            android:background="@drawable/ic_dialogue_cancel"
+            />
+
+        <Button
+            android:id="@+id/dialogue_color_ok_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_dialogue_ok"
+            />
+    </LinearLayout>
+
+</LinearLayout>

@@ -3,9 +3,12 @@
     android:id="@+id/fragment_ploca_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/board"
-    android:clickable="true"
+
+
     android:padding="0dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -51,22 +54,64 @@
     </RelativeLayout>
 
 
-    <RelativeLayout
+    <com.example.tie.mc2.BoardViews.BoardDrawingLayout
         android:id="@+id/board_finished"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/board"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
 
         <FrameLayout
             android:id="@+id/trash"
             android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_height="140dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:background="@drawable/delete_view_empty"
 
-            ></FrameLayout>
+            >
+
+
+        </FrameLayout>
+        <LinearLayout
+            android:id="@+id/finger_options_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/trash"
+            android:background="@drawable/board_options_background"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ToggleButton
+                android:id="@+id/paint_brush_button"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:background="@drawable/paint_brush_check"
+                android:layout_marginRight="15dp"
+                android:padding="10dp"
+                />
+            <ToggleButton
+                android:id="@+id/paint_eraser_button"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:background="@drawable/paint_eraser_check"
+                android:layout_marginRight="15dp"
+                android:padding="10dp"
+                />
+            <View
+                android:id="@+id/paint_palette_button"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_paint_palette"
+                android:padding="10dp"
+
+                />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -82,10 +127,7 @@
                 android:id="@+id/main_save"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-
                 android:layout_gravity="center"
-
-
                 android:background="@drawable/ic_board_save"
 
 
@@ -94,7 +136,7 @@
         </LinearLayout>
 
 
-    </RelativeLayout>
+    </com.example.tie.mc2.BoardViews.BoardDrawingLayout>
 
 
 

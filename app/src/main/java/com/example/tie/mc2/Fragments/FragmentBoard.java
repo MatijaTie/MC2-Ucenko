@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -17,20 +19,22 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.ToggleButton;
 
+import com.example.tie.mc2.BoardViews.BoardDrawingLayout;
 import com.example.tie.mc2.BoardViews.BoardTextView;
 import com.example.tie.mc2.BoardViews.BoardTimelineView;
 import com.example.tie.mc2.BoardViews.BoardImageView;
 import com.example.tie.mc2.BoardViews.BoardTimelineViewButton;
+import com.example.tie.mc2.Dialogues.ColorChangeDialogue;
 import com.example.tie.mc2.OptionButtons.OptionsAllBorderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageFolderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageTakePhotoButton;
@@ -45,7 +49,6 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -62,7 +65,7 @@ import static com.example.tie.mc2.Activities.BoardActivity.IMAGE_REQUEST;
  * Created by Tie on 10-Mar-18.
  */
 
-public class FragmentBoard extends Fragment implements View.OnDragListener, View.OnTouchListener{
+public class FragmentBoard extends Fragment implements View.OnDragListener{
 
     public final String INDENTIFIER_TIMELINE = "class com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable";
     public final String INDENTIFIER_TEXT = "class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable";
@@ -73,13 +76,20 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
     private ProgressBar progressBarLine;
     private LinearLayout loadingScreen;
     private RelativeLayout boardMain;
-    private RelativeLayout mainLayout;
+    private BoardDrawingLayout mainLayout;
     private JSONObject Jroot;
     private FragmentBoard fragment;
     private Context context;
+    private ToggleButton brush, eraser;
     Point point;
+    private BoardDrawingLayout drawingLayout;
+    private View palette;
+
+    BoardDrawingLayout boardDrawingLayout ;
+
 
     private ArrayList<RootView> childRootViews;
+
 
     public static FragmentBoard newInstance(Uri uri){
         if(uri != null){
@@ -97,13 +107,13 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         boardMain = (RelativeLayout) inflater.inflate(R.layout.fragment_ploca, container, false);
-
         context = getActivity();
         this.fragment = this;
         childRootViews = new ArrayList<>();
         return boardMain;
 
     }
+
 
     public void addTochildContainer(RootView rootView){
         childRootViews.add(rootView);
@@ -116,11 +126,54 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mainLayout = view.findViewById(R.id.board_finished);
         mainLayout.setOnDragListener(this);
-        mainLayout.setOnTouchListener(this);
 
+        //mainLayout.setOnTouchListener(this);
         FrameLayout trash = view.findViewById(R.id.trash);
         trash.bringToFront();
         trash.setOnDragListener(new TrashOnDragListener(trash, this));
+
+        brush = view.findViewById(R.id.paint_brush_button);
+        brush.setText(null);
+        brush.setTextOn(null);
+        brush.setTextOff(null);
+        brush.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    mainLayout.setPainting(true);
+                    eraser.setChecked(false);
+                }else{
+                    mainLayout.setPainting(false);
+
+                }
+            }
+        });
+
+        eraser = view.findViewById(R.id.paint_eraser_button);
+        eraser.setText(null);
+        eraser.setTextOn(null);
+        eraser.setTextOff(null);
+        eraser.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    mainLayout.setErasing(true);
+                    brush.setChecked(false);
+                }else{
+                    mainLayout.setErasing(false);
+
+                }
+            }
+        });
+
+        palette = view.findViewById(R.id.paint_palette_button);
+        palette.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ColorChangeDialogue dialogue = new ColorChangeDialogue(getContext(), mainLayout);
+                dialogue.show();
+            }
+        });
 
         loadingScreen = view.findViewById(R.id.board_loading_layout);
         progressBarLine = view.findViewById(R.id.progressBarLine);
@@ -142,6 +195,11 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
             loadingScreen.setVisibility(View.GONE);
         }
         super.onViewCreated(view, savedInstanceState);
+
+    }
+
+    public void setBrushColor(int color){
+        mainLayout.setDrawingColor(color);
     }
 
     private class LoadingTask extends AsyncTask<Uri, Integer, RelativeLayout> {
@@ -241,21 +299,6 @@ public class FragmentBoard extends Fragment implements View.OnDragListener, View
                 return true;
         }
         return true;
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()){
-            case MotionEvent.ACTION_UP:
-                //Toast.makeText(getContext(), "action up", Toast.LENGTH_SHORT).show();
-                return true;
-
-            case MotionEvent.ACTION_DOWN:
-                removeSoftKeyboard(v);
-                return true;
-
-        }
-        return false;
     }
 
     //hvatanje slike
