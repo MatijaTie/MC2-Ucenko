@@ -42,6 +42,7 @@ import com.example.tie.mc2.OptionButtons.OptionsTextResizeButton;
 import com.example.tie.mc2.OptionButtons.OptionsTimlineAddButton;
 import com.example.tie.mc2.BoardViews.RootView;
 import com.example.tie.mc2.Listeners.TrashOnDragListener;
+import com.example.tie.mc2.OptionButtons.OptionsWebviewAddBookmarkButton;
 import com.example.tie.mc2.OptionButtons.OptionsWebviewBackButton;
 import com.example.tie.mc2.R;
 import com.example.tie.mc2.BoardViews.ViewBuilder;
@@ -436,14 +437,16 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
             case INDENTIFIER_WEBVIEW:
                 rootView = getRootViewWithParams(x, y);
 
-                BoardWebView webView = new BoardWebView(context);
+                BoardWebView webView = new BoardWebView(context, rootView);
 
                 OptionsWebviewBackButton optionsWebviewBackButton = new OptionsWebviewBackButton(context, webView);
                 OptionsAllBorderButton optionsAllBorderButton4 = new OptionsAllBorderButton(context, rootView);
+                OptionsWebviewAddBookmarkButton optionsWebviewAddBookmarkButton = new OptionsWebviewAddBookmarkButton(context, webView);
 
                 rootView.addViewToHolder(webView);
                 rootView.addViewToViewOptionsHolder(optionsAllBorderButton4);
                 rootView.addViewToViewOptionsHolder(optionsWebviewBackButton);
+                rootView.addViewToViewOptionsHolder(optionsWebviewAddBookmarkButton);
                 childRootViews.add(rootView);
                 break;
 

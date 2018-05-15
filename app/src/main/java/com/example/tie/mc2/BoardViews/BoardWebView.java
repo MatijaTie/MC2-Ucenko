@@ -4,6 +4,12 @@ import android.content.Context;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import com.example.tie.mc2.OptionButtons.OptionsWebviewBookmark;
+
+import java.util.ArrayList;
 
 /**
  * Created by Tie on 14-May-18.
@@ -11,14 +17,18 @@ import android.webkit.WebViewClient;
 
 public class BoardWebView extends WebView{
     String startingWebsite = "https://www.google.com/";
-    public BoardWebView(Context context) {
+    ArrayList<String> bookmarks = new ArrayList<>();
+    RootView rootView;
+    private int bookmarkCounter = 0;
+    public BoardWebView(Context context, RootView rootView) {
         super(context);
         initWeb();
+        this.rootView = rootView;
     }
 
     private void initWeb(){
         WebSettings settings = getSettings();
-        //settings.setJavaScriptEnabled(true);
+        settings.setJavaScriptEnabled(true);
         setWebViewClient(new WebViewClient());
         loadUrl(startingWebsite);
 
@@ -29,4 +39,23 @@ public class BoardWebView extends WebView{
             goBack();
         }
     }
+
+    public void addToBookmark(){
+        if(bookmarks.contains(getUrl())){
+            Toast.makeText(getContext(), "Bookmark već postoji", Toast.LENGTH_SHORT).show();
+        }else{
+            bookmarks.add(getUrl());
+            rootView.addViewToViewOptionsHolder(new OptionsWebviewBookmark(getContext(), this, bookmarkCounter));
+            bookmarkCounter++;
+            Toast.makeText(getContext(),"Novi bookmark:\n"+getUrl(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void loadBookmark(int x){
+        if(x < bookmarks.size() && !getUrl().equals(bookmarks.get(x))) {
+            loadUrl(bookmarks.get(x));
+        }
+    }
+
 }
