@@ -107,9 +107,11 @@
                 android:layout_height="45dp"
                 android:layout_gravity="center"
                 android:background="@drawable/ic_paint_palette"
-                android:padding="10dp"
+                android:padding="10dp">
 
-                />
+
+            </View>
+
 
         </LinearLayout>
 

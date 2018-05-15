@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.example.tie.mc2.BoardViews.BoardDrawingLayout;
 import com.example.tie.mc2.R;
@@ -23,12 +24,12 @@ import com.example.tie.mc2.R;
  */
 
 public class ColorChangeDialogue extends Dialog {
-    LinearLayout mainLayout;
-    Button okButton, cancelButton;
-    SeekBar seekBar1, seekBar2, seekBar3;
+    private Button okButton, cancelButton;
+    private SeekBar seekBar1, seekBar2, seekBar3;
     private int color;
-    TextView colorHolder;
-    BoardDrawingLayout targetView;
+    private TextView colorHolder;
+    private BoardDrawingLayout targetView;
+
 
     public ColorChangeDialogue(@NonNull Context context, BoardDrawingLayout layout) {
         super(context);
@@ -41,7 +42,6 @@ public class ColorChangeDialogue extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialogue_color_modifier);
-        mainLayout = findViewById(R.id.dialogue_text_main_layout);
         okButton = findViewById(R.id.dialogue_color_ok_button);
         cancelButton = findViewById(R.id.dialogue_color_cancel_button);
         seekBar1 = findViewById(R.id.dialogue_color_seek_bar1);
@@ -54,7 +54,7 @@ public class ColorChangeDialogue extends Dialog {
         setConfirmButtons();
     }
 
-    public void initSeekBar(){
+    private void initSeekBar(){
         seekBar1.getProgressDrawable().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
         seekBar2.getProgressDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN);
         seekBar3.getProgressDrawable().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
@@ -132,7 +132,6 @@ public class ColorChangeDialogue extends Dialog {
 
     private void setSeekbarProgress(){
         int red, green, blue;
-
 
         red = Color.red(color);
         green = Color.green(color);

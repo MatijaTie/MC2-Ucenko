@@ -1,5 +1,6 @@
 package com.example.tie.mc2.BoardViews;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -8,10 +9,15 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.media.ThumbnailUtils;
 import android.util.AttributeSet;
+import android.util.Base64;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Created by Tie on 12-May-18.
@@ -51,6 +57,8 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
     }
 
     private void init(){
+        setDrawingCacheEnabled(true);
+        //setBackgroundColor(Color.TRANSPARENT);
         isPainting = false;
         isErasing = false;
 
@@ -77,7 +85,7 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
     }
 
     private void setDravingStyle(){
-        paint.setColor(Color.GREEN);
+        paint.setXfermode(null);
         paint.setStrokeWidth(15);
     }
 
@@ -86,12 +94,11 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
     }
 
     public void setDrawingColor(int color){
-        paint.setColor(color);
 
+        paint.setColor(color);
     }
 
     private void setErasingStyle(){
-        paint.setColor(Color.TRANSPARENT);
         paint.setStrokeWidth(45);
     }
 
@@ -112,6 +119,17 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
         }else{
             isErasing = false;
             paint.setXfermode(null);
+        }
+    }
+
+    public void setCanvas(Canvas canvas){
+        draw(canvas);
+
+    }
+    public void removeSoftKeyboard(View v){
+        InputMethodManager inputMethodManager =(InputMethodManager)getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
         }
     }
 
@@ -183,6 +201,7 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                removeSoftKeyboard(v);
                 if(isPainting || isErasing) {
                     touch_start(x, y);
                     invalidate();
@@ -202,6 +221,15 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
                 break;
         }
         return true;
+    }
+
+    public String saveDrawing()
+    {
+        Bitmap bitmap = getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
 }

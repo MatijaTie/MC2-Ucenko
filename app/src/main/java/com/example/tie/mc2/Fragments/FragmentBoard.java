@@ -1,14 +1,13 @@
 package com.example.tie.mc2.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,12 +15,12 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -34,6 +33,7 @@ import com.example.tie.mc2.BoardViews.BoardTextView;
 import com.example.tie.mc2.BoardViews.BoardTimelineView;
 import com.example.tie.mc2.BoardViews.BoardImageView;
 import com.example.tie.mc2.BoardViews.BoardTimelineViewButton;
+import com.example.tie.mc2.BoardViews.BoardWebView;
 import com.example.tie.mc2.Dialogues.ColorChangeDialogue;
 import com.example.tie.mc2.OptionButtons.OptionsAllBorderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageFolderButton;
@@ -42,6 +42,7 @@ import com.example.tie.mc2.OptionButtons.OptionsTextResizeButton;
 import com.example.tie.mc2.OptionButtons.OptionsTimlineAddButton;
 import com.example.tie.mc2.BoardViews.RootView;
 import com.example.tie.mc2.Listeners.TrashOnDragListener;
+import com.example.tie.mc2.OptionButtons.OptionsWebviewBackButton;
 import com.example.tie.mc2.R;
 import com.example.tie.mc2.BoardViews.ViewBuilder;
 
@@ -70,6 +71,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     public final String INDENTIFIER_TIMELINE = "class com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable";
     public final String INDENTIFIER_TEXT = "class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable";
     public final String INDENTIFIER_IMAGE = "class com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable";
+    public final String INDENTIFIER_WEBVIEW= "class com.example.tie.mc2.ToolbarComponents.WebviewComponentDraggable";
 
     private BoardImageView lastImageView;
     public Bitmap lastimageBitmap;
@@ -77,7 +79,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     private LinearLayout loadingScreen;
     private RelativeLayout boardMain;
     private BoardDrawingLayout mainLayout;
-    private JSONObject Jroot;
+    private JSONObject JrootView, Jfragment;
     private FragmentBoard fragment;
     private Context context;
     private ToggleButton brush, eraser;
@@ -85,7 +87,6 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     private BoardDrawingLayout drawingLayout;
     private View palette;
 
-    BoardDrawingLayout boardDrawingLayout ;
 
 
     private ArrayList<RootView> childRootViews;
@@ -124,10 +125,19 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        initialize(view);
+        super.onViewCreated(view, savedInstanceState);
+
+    }
+
+    public void setBrushColor(int color){
+        mainLayout.setDrawingColor(color);
+    }
+
+    private void initialize(View view){
         mainLayout = view.findViewById(R.id.board_finished);
         mainLayout.setOnDragListener(this);
 
-        //mainLayout.setOnTouchListener(this);
         FrameLayout trash = view.findViewById(R.id.trash);
         trash.bringToFront();
         trash.setOnDragListener(new TrashOnDragListener(trash, this));
@@ -186,7 +196,6 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
             }
         });
 
-
         Bundle args = getArguments();
         if(args != null && args.getString("uriString") != null){
             Uri uri = Uri.parse(args.getString("uriString"));
@@ -194,12 +203,6 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
         }else{
             loadingScreen.setVisibility(View.GONE);
         }
-        super.onViewCreated(view, savedInstanceState);
-
-    }
-
-    public void setBrushColor(int color){
-        mainLayout.setDrawingColor(color);
     }
 
     private class LoadingTask extends AsyncTask<Uri, Integer, RelativeLayout> {
@@ -234,7 +237,25 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 jsonString = writer.toString();
                 inputStream.close();
 
-                JSONObject object = new JSONObject(jsonString);
+                Log.d("load", jsonString);
+
+                JSONObject Jfragment = new JSONObject(jsonString);
+
+                String str = Jfragment.getString("drawing");
+                byte[] decodeString = Base64.decode(str, Base64.DEFAULT);
+                Bitmap image = BitmapFactory.decodeByteArray(decodeString, 0, decodeString.length);
+               // Bitmap mutableImage = image.copy(Bitmap.Config.ARGB_8888, true);
+                //final Canvas canvas = new Canvas(mutableImage);
+
+                final Drawable drawable = new BitmapDrawable(getResources(),image);
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mainLayout.setBackground(drawable);
+                    }
+                });
+                JSONObject object = Jfragment.getJSONObject("rootViews");
 
                 Iterator<String> iterator = object.keys();
                 Iterator<String> counter = object.keys();
@@ -273,7 +294,6 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
         return new Point(rItem.left + Math.round(event.getX()), rItem.top + Math.round(event.getY()));
     }
 
-    //metoda koja ce primati listenere za drag evente
     @Override
     public boolean onDrag(View boardView, DragEvent event) {
         //pozicija gdje se dropa
@@ -319,8 +339,8 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 stream = context.getContentResolver().openInputStream(
                         data.getData());
                 lastimageBitmap = BitmapFactory.decodeStream(stream);
-                stream.close();
                 lastImageView.setImage(lastimageBitmap);
+                stream.close();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -329,7 +349,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
         }else if(requestCode == 0202 && data != null){
             Uri uri = data.getData();
             Log.d("0202",""+uri.getPath());
-            writeFile(data.getData(), Jroot.toString());
+            writeFile(data.getData(), Jfragment.toString());
         }
     }
 
@@ -411,17 +431,26 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 rootView.addViewToViewOptionsHolder(optionsImageTakePhotoButton);
                 rootView.addViewToViewOptionsHolder(optionsImageFolderButton);
                 childRootViews.add(rootView);
-
                 break;
+
+            case INDENTIFIER_WEBVIEW:
+                rootView = getRootViewWithParams(x, y);
+
+                BoardWebView webView = new BoardWebView(context);
+
+                OptionsWebviewBackButton optionsWebviewBackButton = new OptionsWebviewBackButton(context, webView);
+                OptionsAllBorderButton optionsAllBorderButton4 = new OptionsAllBorderButton(context, rootView);
+
+                rootView.addViewToHolder(webView);
+                rootView.addViewToViewOptionsHolder(optionsAllBorderButton4);
+                rootView.addViewToViewOptionsHolder(optionsWebviewBackButton);
+                childRootViews.add(rootView);
+                break;
+
         }
     }
 
-    public void removeSoftKeyboard(View v){
-        InputMethodManager inputMethodManager =(InputMethodManager)getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null) {
-            inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        }
-    }
+
 
     public void setDraggedViewLocation(View draggedView, Point point) {
         int newPosX, newPosY;
@@ -463,23 +492,28 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
 
         @Override
         protected String doInBackground(String... strings) {
-            writeToJson();
+            try {
+                writeToJson();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return null;
         }
     }
-    public void writeToJson(){
+    public void writeToJson() throws JSONException {
         int counter = 0;
         int posX, posY;
         int width, height;
-        String holderClass;
-        Jroot = new JSONObject();
+        String holderClass, drawing;
+        JrootView = new JSONObject();
+        Jfragment = new JSONObject();
+        drawing = mainLayout.saveDrawing();
 
         for(RootView r : childRootViews){
             //Log.d("ispis", ""+r.getMainView().getClass());
             Log.d("ispis", "x:"+r.getX());
             Log.d("ispis", "y:"+r.getY());
 
-            try{
                 posX = (int) r.getX();
                 posY = (int) r.getY();
 
@@ -488,13 +522,16 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
 
                 holderClass = r.getMainView().getClass().toString();
 
-                JSONObject JrootView = new JSONObject();
 
-                JrootView.put("class", holderClass);
-                JrootView.put("posx", posX);
-                JrootView.put("posy", posY);
-                JrootView.put("width",width);
-                JrootView.put("height",height);
+
+                JSONObject JrootViewObject = new JSONObject();
+
+                JrootViewObject.put("class", holderClass);
+                JrootViewObject.put("posx", posX);
+                JrootViewObject.put("posy", posY);
+                JrootViewObject.put("width",width);
+                JrootViewObject.put("height",height);
+
                 switch (holderClass){
                     case "class com.example.tie.mc2.BoardViews.BoardTextView":
                         JSONObject childObjectData = new JSONObject();
@@ -503,13 +540,13 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                         childObjectData.put("textSize", v.getCustomTextSize());
                         childObjectData.put("background",v.getEnteredBackgroundColor());
                         childObjectData.put("textColor",v.getCurrentTextColor());
-                        JrootView.put("child", childObjectData);
+                        JrootViewObject.put("child", childObjectData);
                         break;
                     case "class com.example.tie.mc2.BoardViews.BoardImageView":
                         JSONObject childObjectData2 = new JSONObject();
                         BoardImageView v2 = (BoardImageView) r.getMainView();
                         childObjectData2.put("image", v2.getImageEncoded());
-                        JrootView.put("child", childObjectData2);
+                        JrootViewObject.put("child", childObjectData2);
                         break;
 
                     case "class com.example.tie.mc2.BoardViews.BoardTimelineView":
@@ -526,19 +563,19 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                             childObjectData3.put("timelinePart"+no, timelineObjectData);
                             no++;
                         }
-                        JrootView.put("child",childObjectData3);
-                        Log.d("jsonamo chobj3",JrootView.toString());
+                        JrootViewObject.put("child",childObjectData3);
+                        Log.d("jsonamo chobj3",JrootViewObject.toString());
                         break;
                 }
-                Jroot.put("view"+counter, JrootView);
-                Log.d("jsonamo jroot",Jroot.toString());
+                this.JrootView.put("view"+counter, JrootViewObject);
+                Log.d("jsonamo jroot", this.JrootView.toString());
                 counter++;
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
 
         }
-        Log.d("ispis", ""+Jroot.toString());
+        Jfragment.put("drawing",drawing);
+        Jfragment.put("rootViews",JrootView);
+
+        Log.d("ispis", ""+ Jfragment.toString());
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.setType("application/.tie");
         startActivityForResult(intent, 0202);
@@ -553,9 +590,8 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
         String dataStr = data;
         OutputStream outputStream;
         try{
-            outputStream = context.getContentResolver().openOutputStream(location);
-            //outputStream.write(data.getBytes(Charset.defaultCharset()));
-
+            outputStream = getContext().getContentResolver().openOutputStream(location);
+            outputStream.write(data.getBytes(Charset.defaultCharset()));
             outputStream.flush();
             outputStream.close();
         }catch (Exception e){
