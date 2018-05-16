@@ -151,13 +151,12 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
         } else if (dXv < width / partNu && dYv > height / partNu && dYv < (height / partNu) * (partNu - 1)) {                  //SAMO LIJEVO
             return -1;
         } else if (dXv > width / partNu && dXv < (width / partNu) * (partNu - 1) && dYv > (height / partNu) * (partNu - 1)) {        //SAMO DOLJE
-            return 2;
+            return -1;
         } else if (dXv > (width / partNu) * (partNu - 1) && dYv > (height / partNu) * (partNu - 1)) {                              //DOLJE DESNO
             return 1;
         } else if (dXv > (width / partNu) * (partNu - 1) && dYv < (height / partNu) * (partNu - 1) && dYv > height / partNu) {       //SAMO DESNO
             return -1;
         } else {
-            Log.d("touch pos", "nesto trece");
             return -1;
         }
     }

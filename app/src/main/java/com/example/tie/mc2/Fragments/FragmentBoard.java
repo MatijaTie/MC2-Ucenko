@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -78,8 +79,8 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     public Bitmap lastimageBitmap;
     private ProgressBar progressBarLine;
     private LinearLayout loadingScreen;
-    private RelativeLayout boardMain;
-    private BoardDrawingLayout mainLayout;
+    private RelativeLayout boardMain, boardViews;
+    private BoardDrawingLayout boardDrawing;
     private JSONObject JrootView, Jfragment;
     private FragmentBoard fragment;
     private Context context;
@@ -108,7 +109,8 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        boardMain = (RelativeLayout) inflater.inflate(R.layout.fragment_ploca, container, false);
+        boardMain = (RelativeLayout) inflater.inflate(R.layout.fragment_board, container, false);
+
         context = getActivity();
         this.fragment = this;
         childRootViews = new ArrayList<>();
@@ -120,8 +122,8 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     public void addTochildContainer(RootView rootView){
         childRootViews.add(rootView);
     }
-    public RelativeLayout getMainLayout(){
-        return mainLayout;
+    public RelativeLayout getBoardDrawing(){
+        return boardDrawing;
     }
 
     @Override
@@ -132,12 +134,14 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     }
 
     public void setBrushColor(int color){
-        mainLayout.setDrawingColor(color);
+        boardDrawing.setDrawingColor(color);
     }
 
     private void initialize(View view){
-        mainLayout = view.findViewById(R.id.board_finished);
-        mainLayout.setOnDragListener(this);
+
+        boardDrawing = view.findViewById(R.id.board_drawing);
+        boardDrawing.setOnDragListener(this);
+
 
         FrameLayout trash = view.findViewById(R.id.trash);
         trash.bringToFront();
@@ -151,10 +155,10 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    mainLayout.setPainting(true);
+                    boardDrawing.setPainting(true);
                     eraser.setChecked(false);
                 }else{
-                    mainLayout.setPainting(false);
+                    boardDrawing.setPainting(false);
 
                 }
             }
@@ -168,10 +172,10 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    mainLayout.setErasing(true);
+                    boardDrawing.setErasing(true);
                     brush.setChecked(false);
                 }else{
-                    mainLayout.setErasing(false);
+                    boardDrawing.setErasing(false);
 
                 }
             }
@@ -181,7 +185,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
         palette.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ColorChangeDialogue dialogue = new ColorChangeDialogue(getContext(), mainLayout);
+                ColorChangeDialogue dialogue = new ColorChangeDialogue(getContext(), boardDrawing);
                 dialogue.show();
             }
         });
@@ -211,14 +215,14 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
 
         @Override
         protected void onPreExecute() {
-            mainLayout.setVisibility(View.INVISIBLE);
+            boardDrawing.setVisibility(View.INVISIBLE);
             progressBarLine.setProgress(0);
         }
 
         @Override
         protected void onPostExecute(RelativeLayout relativeLayout) {
             loadingScreen.setVisibility(View.GONE);
-            mainLayout.setVisibility(View.VISIBLE);
+            boardDrawing.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -243,19 +247,18 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 JSONObject Jfragment = new JSONObject(jsonString);
 
                 String str = Jfragment.getString("drawing");
-                byte[] decodeString = Base64.decode(str, Base64.DEFAULT);
-                Bitmap image = BitmapFactory.decodeByteArray(decodeString, 0, decodeString.length);
-               // Bitmap mutableImage = image.copy(Bitmap.Config.ARGB_8888, true);
-                //final Canvas canvas = new Canvas(mutableImage);
+                if(str != null && str != ""){
+                    byte[] decodeString = Base64.decode(str, Base64.DEFAULT);
+                    Bitmap image = BitmapFactory.decodeByteArray(decodeString, 0, decodeString.length);
+                    final Drawable drawable = new BitmapDrawable(getResources(),image);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            boardDrawing.setBackground(drawable);
+                        }
+                    });
+                }
 
-                final Drawable drawable = new BitmapDrawable(getResources(),image);
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mainLayout.setBackground(drawable);
-                    }
-                });
                 JSONObject object = Jfragment.getJSONObject("rootViews");
 
                 Iterator<String> iterator = object.keys();
@@ -266,7 +269,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                     itemCount++;
                 }
 
-                ViewBuilder viewBuilder = new ViewBuilder(context, mainLayout);
+                ViewBuilder viewBuilder = new ViewBuilder(getActivity(), boardDrawing);
                 double multiplyer = 0;
                 while (iterator.hasNext()){
                     String key = iterator.next();
@@ -276,7 +279,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mainLayout.addView(newView);
+                            boardDrawing.addView(newView);
                             childRootViews.add(newView);
                         }
                     });
@@ -376,6 +379,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
         float posX, posY, x, y;
         float offsetX,offsetY;
         RootView rootView;
+        Log.d("pravimo",""+childRootViews.size());
 
 
         posX = event.getX();
@@ -440,11 +444,9 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 BoardWebView webView = new BoardWebView(context, rootView);
 
                 OptionsWebviewBackButton optionsWebviewBackButton = new OptionsWebviewBackButton(context, webView);
-                OptionsAllBorderButton optionsAllBorderButton4 = new OptionsAllBorderButton(context, rootView);
                 OptionsWebviewAddBookmarkButton optionsWebviewAddBookmarkButton = new OptionsWebviewAddBookmarkButton(context, webView);
 
                 rootView.addViewToHolder(webView);
-                rootView.addViewToViewOptionsHolder(optionsAllBorderButton4);
                 rootView.addViewToViewOptionsHolder(optionsWebviewBackButton);
                 rootView.addViewToViewOptionsHolder(optionsWebviewAddBookmarkButton);
                 childRootViews.add(rootView);
@@ -457,8 +459,8 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
 
     public void setDraggedViewLocation(View draggedView, Point point) {
         int newPosX, newPosY;
-        if(mainLayout != null && draggedView != null){
-            newPosX = point.x - mainLayout.getWidth() / 15 - draggedView.getWidth() / 2;
+        if(boardDrawing != null && draggedView != null){
+            newPosX = point.x - boardDrawing.getWidth() / 15 - draggedView.getWidth() / 2;
             newPosY = point.y - draggedView.getHeight() / 2 - 45;
 
             if(newPosX < 0) {
@@ -480,7 +482,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     private RootView getRootViewWithParams(float x, float y){
         ViewGroup.LayoutParams params;
         RootView rootView = new RootView(context);
-        mainLayout.addView(rootView);
+        boardDrawing.addView(rootView);
         params = rootView.getLayoutParams();
         params.width = 350;
         params.height = 350;
@@ -507,10 +509,10 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
         int counter = 0;
         int posX, posY;
         int width, height;
-        String holderClass, drawing;
+        String holderClass;
         JrootView = new JSONObject();
         Jfragment = new JSONObject();
-        drawing = mainLayout.saveDrawing();
+
 
         for(RootView r : childRootViews){
             //Log.d("ispis", ""+r.getMainView().getClass());
@@ -524,8 +526,6 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 height = r.getHeight();
 
                 holderClass = r.getMainView().getClass().toString();
-
-
 
                 JSONObject JrootViewObject = new JSONObject();
 
@@ -569,13 +569,44 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                         JrootViewObject.put("child",childObjectData3);
                         Log.d("jsonamo chobj3",JrootViewObject.toString());
                         break;
+
+                    case "class com.example.tie.mc2.BoardViews.BoardWebView":
+                        JSONObject childObjectData4 = new JSONObject();
+                        BoardWebView v4 = (BoardWebView) r.getMainView();
+                        ArrayList<String> dataArray = v4.getBookmarks();
+                        Log.d("bokmark broj:",""+dataArray.size());
+                        int counter2 = 0;
+                        for(String s : dataArray){
+                            childObjectData4.put("bookmark"+counter2, s);
+                            counter2++;
+                        }
+                        JrootViewObject.put("child",childObjectData4);
+                        break;
                 }
                 this.JrootView.put("view"+counter, JrootViewObject);
                 Log.d("jsonamo jroot", this.JrootView.toString());
                 counter++;
 
         }
-        Jfragment.put("drawing",drawing);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for(RootView v : childRootViews){
+                    v.setVisibility(View.INVISIBLE);
+                }
+                String drawing = boardDrawing.saveDrawing();
+                try {
+                    Jfragment.put("drawing",drawing);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for(RootView v : childRootViews){
+                    v.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
         Jfragment.put("rootViews",JrootView);
 
         Log.d("ispis", ""+ Jfragment.toString());

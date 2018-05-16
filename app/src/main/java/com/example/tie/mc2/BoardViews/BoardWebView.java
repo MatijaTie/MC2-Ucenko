@@ -16,6 +16,7 @@ import java.util.ArrayList;
  */
 
 public class BoardWebView extends WebView{
+
     String startingWebsite = "https://www.google.com/";
     ArrayList<String> bookmarks = new ArrayList<>();
     RootView rootView;
@@ -31,6 +32,9 @@ public class BoardWebView extends WebView{
         settings.setJavaScriptEnabled(true);
         setWebViewClient(new WebViewClient());
         loadUrl(startingWebsite);
+    }
+
+    public void loadPage(){
 
     }
 
@@ -51,11 +55,23 @@ public class BoardWebView extends WebView{
         }
 
     }
+    public void addToBookmark(String bookmark){
+        if(!bookmarks.contains(bookmark)){
+            bookmarks.add(bookmark);
+            rootView.addViewToViewOptionsHolder(new OptionsWebviewBookmark(getContext(), this, bookmarkCounter));
+            bookmarkCounter++;
+        }
+
+    }
 
     public void loadBookmark(int x){
         if(x < bookmarks.size() && !getUrl().equals(bookmarks.get(x))) {
             loadUrl(bookmarks.get(x));
         }
+    }
+
+    public ArrayList<String> getBookmarks(){
+        return bookmarks;
     }
 
 }

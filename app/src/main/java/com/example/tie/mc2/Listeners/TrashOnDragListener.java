@@ -1,6 +1,5 @@
 package com.example.tie.mc2.Listeners;
 
-import android.app.Fragment;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class TrashOnDragListener implements View.OnDragListener {
 
                 View deleteView = (View) event.getLocalState();
                 ViewGroup owner = (ViewGroup) deleteView.getParent();
-                if(owner.getId() == R.id.board_finished) {
+                if(owner.getId() == R.id.board_drawing) {
                     owner.removeView(deleteView);
                     trash.setBackgroundResource(R.drawable.delete_view_empty);
                     parentFragment.removeViewFromList(deleteView);

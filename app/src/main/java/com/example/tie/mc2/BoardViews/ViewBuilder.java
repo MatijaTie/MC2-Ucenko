@@ -1,5 +1,6 @@
 package com.example.tie.mc2.BoardViews;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,8 @@ import com.example.tie.mc2.OptionButtons.OptionsImageFolderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageTakePhotoButton;
 import com.example.tie.mc2.OptionButtons.OptionsTextResizeButton;
 import com.example.tie.mc2.OptionButtons.OptionsTimlineAddButton;
+import com.example.tie.mc2.OptionButtons.OptionsWebviewAddBookmarkButton;
+import com.example.tie.mc2.OptionButtons.OptionsWebviewBackButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +26,7 @@ import java.util.Iterator;
 import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_IMAGE_CLASS;
 import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TEXT_CLASS;
 import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TIMELINE_CLASS;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_WEB_CLASS;
 
 /**
  * Created by Tie on 06-May-18.
@@ -33,9 +37,9 @@ public class ViewBuilder {
     JSONObject jView;
     RelativeLayout mainLayout;
     FragmentBoard fragment;
-    Context context;
+    Activity context;
 
-    public ViewBuilder(Context context, RelativeLayout mainLayout){
+    public ViewBuilder(Activity context, RelativeLayout mainLayout){
         this.jView = jView;
         this.fragment = fragment;
         this.context = context;
@@ -51,12 +55,12 @@ public class ViewBuilder {
             int viewPosY = (int) jView.get("posy");
             int width = (int) jView.get("width");
             int height = (int) jView.get("height");
-            JSONObject jData = jView.getJSONObject("child");
+            final JSONObject jData = jView.getJSONObject("child");
 
             Log.d("json class", viewClass +" x "+viewPosX+" y "+ viewPosY);
 
             //ROOT VIEW
-            RootView rootView = new RootView(context);
+            final RootView rootView = new RootView(context);
 
             rootView.setX((float) viewPosX);
             rootView.setY((float) viewPosY);
@@ -126,6 +130,31 @@ public class ViewBuilder {
 
                     return rootView;
 
+                case INDENTIFIER_WEB_CLASS:
+
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BoardWebView boardWebView = new BoardWebView(context, rootView);
+                            OptionsWebviewBackButton optionsWebviewBackButton = new OptionsWebviewBackButton(context,boardWebView);
+                            OptionsWebviewAddBookmarkButton optionsWebviewAddBookmarkButton = new OptionsWebviewAddBookmarkButton(context,boardWebView);
+                            rootView.addViewToViewOptionsHolder(optionsWebviewBackButton);
+                            rootView.addViewToViewOptionsHolder(optionsWebviewAddBookmarkButton);
+                            Iterator<String> iterator2 = jData.keys();
+                            while(iterator2.hasNext()){
+                                String key = iterator2.next();
+                                try {
+                                    boardWebView.addToBookmark(jData.getString(key));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            rootView.addViewToHolder(boardWebView);
+                        }
+                    });
+
+                    return rootView;
             }
 
 

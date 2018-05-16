@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.example.tie.mc2.BoardViews.RootView;
 import com.example.tie.mc2.BoardViews.ViewBuilder;
-import com.example.tie.mc2.LoadingTask;
 import com.example.tie.mc2.R;
 
 import org.apache.commons.io.IOUtils;
@@ -74,7 +73,7 @@ public class LoadingActivity extends AppCompatActivity {
 
         @Override
         protected RelativeLayout doInBackground(Uri... uris) {
-            RelativeLayout mainLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.fragment_ploca, null, false);
+            RelativeLayout mainLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.fragment_board, null, false);
             String jsonString;
             InputStream inputStream;
             try{
@@ -94,13 +93,13 @@ public class LoadingActivity extends AppCompatActivity {
                     itemCount++;
                 }
 
-                ViewBuilder viewBuilder = new ViewBuilder(getApplicationContext(), mainLayout);
+
                 double multiplyer = 0;
                 while (iterator.hasNext()){
                     String key = iterator.next();
                     multiplyer++;
                     JSONObject jView = (JSONObject) object.get(key);
-                    childRootViews.add(viewBuilder.buildView(jView));
+                   // childRootViews.add(viewBuilder.buildView(jView));
                     publishProgress((int)Math.ceil(100.00/itemCount*multiplyer));
                 }
             }catch (Exception e){
