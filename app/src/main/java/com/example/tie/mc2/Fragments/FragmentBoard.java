@@ -40,6 +40,7 @@ import com.example.tie.mc2.OptionButtons.OptionsAllBorderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageFolderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageTakePhotoButton;
 import com.example.tie.mc2.OptionButtons.OptionsTextResizeButton;
+import com.example.tie.mc2.OptionButtons.OptionsTimelineRemoveButton;
 import com.example.tie.mc2.OptionButtons.OptionsTimlineAddButton;
 import com.example.tie.mc2.BoardViews.RootView;
 import com.example.tie.mc2.Listeners.TrashOnDragListener;
@@ -60,20 +61,25 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import static com.example.tie.mc2.Activities.BoardActivity.CAMERA_REQUEST;
-import static com.example.tie.mc2.Activities.BoardActivity.IMAGE_REQUEST;
+import static com.example.tie.mc2.StaticValues.DataKeys.CAMERA_REQUEST;
+import static com.example.tie.mc2.StaticValues.DataKeys.IMAGE_REQUEST;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_IMAGE;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_IMAGE_CLASS;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_MAP;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_MAP_CLASS;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TEXT;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TEXT_CLASS;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TIMELINE;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TIMELINE_CLASS;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_WEBVIEW;
+import static com.example.tie.mc2.StaticValues.DataKeys.SAVE_REQUEST;
 
 
 /**
  * Created by Tie on 10-Mar-18.
  */
 
-public class FragmentBoard extends Fragment implements View.OnDragListener{
-
-    public final String INDENTIFIER_TIMELINE = "class com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable";
-    public final String INDENTIFIER_TEXT = "class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable";
-    public final String INDENTIFIER_IMAGE = "class com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable";
-    public final String INDENTIFIER_WEBVIEW= "class com.example.tie.mc2.ToolbarComponents.WebviewComponentDraggable";
+public class FragmentBoard extends android.support.v4.app.Fragment implements View.OnDragListener{
 
     private BoardImageView lastImageView;
     public Bitmap lastimageBitmap;
@@ -88,8 +94,6 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     Point point;
     private BoardDrawingLayout drawingLayout;
     private View palette;
-
-
 
     private ArrayList<RootView> childRootViews;
 
@@ -110,20 +114,10 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         boardMain = (RelativeLayout) inflater.inflate(R.layout.fragment_board, container, false);
-
         context = getActivity();
-        this.fragment = this;
         childRootViews = new ArrayList<>();
         return boardMain;
 
-    }
-
-
-    public void addTochildContainer(RootView rootView){
-        childRootViews.add(rootView);
-    }
-    public RelativeLayout getBoardDrawing(){
-        return boardDrawing;
     }
 
     @Override
@@ -133,15 +127,10 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
 
     }
 
-    public void setBrushColor(int color){
-        boardDrawing.setDrawingColor(color);
-    }
-
     private void initialize(View view){
-
         boardDrawing = view.findViewById(R.id.board_drawing);
         boardDrawing.setOnDragListener(this);
-
+        boardDrawing.setBackgroundColor(Color.TRANSPARENT);
 
         FrameLayout trash = view.findViewById(R.id.trash);
         trash.bringToFront();
@@ -302,7 +291,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
     public boolean onDrag(View boardView, DragEvent event) {
         //pozicija gdje se dropa
         String sizeString, typeString;
-        View draggedView;
+        View draggedView = (View) event.getLocalState();
 
         switch(event.getAction()){
             case DragEvent.ACTION_DRAG_LOCATION:
@@ -314,18 +303,23 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                     sizeString = event.getClipData().getItemAt(0).getText().toString();
                     typeString = event.getClipData().getDescription().getLabel().toString();
                     createDraggedView(event, sizeString, typeString);
-                }
-                else{                                                                               //Mozda posaviti na else if sa if this == view.getparent()
-                    draggedView = (View) event.getLocalState();
-                    setDraggedViewLocation(draggedView, point);
-                }
 
+                }
+                else{
+                    //Mozda posaviti na else if sa if this == view.getparent()
+                    if(draggedView.getParent()== boardDrawing) {
+                        setDraggedViewLocation(draggedView, point);
+                    }
+                }
                 return true;
+
+            case DragEvent.ACTION_DRAG_EXITED:
+                   draggedView.setVisibility(View.VISIBLE);
+                   return true;
         }
         return true;
     }
 
-    //hvatanje slike
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
 
@@ -350,13 +344,11 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 e.printStackTrace();
             }
             //save file intent
-        }else if(requestCode == 0202 && data != null){
+        }else if(requestCode == SAVE_REQUEST && data != null){
             Uri uri = data.getData();
-            Log.d("0202",""+uri.getPath());
             writeFile(data.getData(), Jfragment.toString());
         }
     }
-
 
     public void takePicture(BoardImageView boardImageView){
         lastImageView = boardImageView;
@@ -367,11 +359,14 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
 
     public void importPicture(BoardImageView boardImageView){
         lastImageView = boardImageView;
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, 22);
+        if(lastImageView != null){
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(intent, IMAGE_REQUEST);
+        }
+
 
     }
 
@@ -402,17 +397,18 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 BoardTimelineView boardTimelineView = new BoardTimelineView(context, rootView);
                 OptionsTimlineAddButton OptionsTimlineAddButton = new OptionsTimlineAddButton(context, boardTimelineView);
                 OptionsAllBorderButton optionsAllBorderButton = new OptionsAllBorderButton(context, rootView);
+                OptionsTimelineRemoveButton optionsTimelineRemoveButton = new OptionsTimelineRemoveButton(context, boardTimelineView);
                 //dodavanje elementa u glavni i options holder
                 rootView.addViewToViewOptionsHolder(optionsAllBorderButton);
                 rootView.addViewToViewOptionsHolder(OptionsTimlineAddButton);
-
+                rootView.addViewToViewOptionsHolder(optionsTimelineRemoveButton);
                 rootView.addViewToHolder(boardTimelineView);
                 childRootViews.add(rootView);
                 break;
 
             case INDENTIFIER_TEXT://class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable
                 rootView = getRootViewWithParams(x, y);
-                BoardTextView boardTextView = new BoardTextView(context);
+                BoardTextView boardTextView = new BoardTextView(context, rootView);
 
                 OptionsTextResizeButton optionsTextResizeButton = new OptionsTextResizeButton(context, boardTextView);
                 OptionsAllBorderButton optionsAllBorderButton2 = new OptionsAllBorderButton(context, rootView);
@@ -452,14 +448,30 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 childRootViews.add(rootView);
                 break;
 
+            case INDENTIFIER_MAP:
+                rootView = getRootViewWithParams(x, y);
+
+                BoardDrawingLayout boardDrawingLayout = new BoardDrawingLayout(context);
+                boardDrawingLayout.setBackgroundResource(R.drawable.map_world);
+                boardDrawingLayout.setPainting(true);
+
+                OptionsAllBorderButton optionsAllBorderButton4 = new OptionsAllBorderButton(context, rootView);
+                rootView.addViewToViewOptionsHolder(optionsAllBorderButton4);
+
+                rootView.addViewToHolder(boardDrawingLayout);
+                childRootViews.add(rootView);
+                break;
+
         }
     }
 
 
 
     public void setDraggedViewLocation(View draggedView, Point point) {
+        draggedView.bringToFront();
         int newPosX, newPosY;
         if(boardDrawing != null && draggedView != null){
+
             newPosX = point.x - boardDrawing.getWidth() / 15 - draggedView.getWidth() / 2;
             newPosY = point.y - draggedView.getHeight() / 2 - 45;
 
@@ -536,7 +548,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                 JrootViewObject.put("height",height);
 
                 switch (holderClass){
-                    case "class com.example.tie.mc2.BoardViews.BoardTextView":
+                    case INDENTIFIER_TEXT_CLASS:
                         JSONObject childObjectData = new JSONObject();
                         BoardTextView v = (BoardTextView) r.getMainView();
                         childObjectData.put("text", v.getText());
@@ -545,14 +557,14 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                         childObjectData.put("textColor",v.getCurrentTextColor());
                         JrootViewObject.put("child", childObjectData);
                         break;
-                    case "class com.example.tie.mc2.BoardViews.BoardImageView":
+                    case INDENTIFIER_IMAGE_CLASS:
                         JSONObject childObjectData2 = new JSONObject();
                         BoardImageView v2 = (BoardImageView) r.getMainView();
                         childObjectData2.put("image", v2.getImageEncoded());
                         JrootViewObject.put("child", childObjectData2);
                         break;
 
-                    case "class com.example.tie.mc2.BoardViews.BoardTimelineView":
+                    case INDENTIFIER_TIMELINE_CLASS:
 
                         JSONObject childObjectData3 = new JSONObject();
                         BoardTimelineView v3 = (BoardTimelineView)r.getMainView();
@@ -570,7 +582,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
                         Log.d("jsonamo chobj3",JrootViewObject.toString());
                         break;
 
-                    case "class com.example.tie.mc2.BoardViews.BoardWebView":
+                    case INDENTIFIER_MAP_CLASS:
                         JSONObject childObjectData4 = new JSONObject();
                         BoardWebView v4 = (BoardWebView) r.getMainView();
                         ArrayList<String> dataArray = v4.getBookmarks();
@@ -612,7 +624,7 @@ public class FragmentBoard extends Fragment implements View.OnDragListener{
         Log.d("ispis", ""+ Jfragment.toString());
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.setType("application/.tie");
-        startActivityForResult(intent, 0202);
+        startActivityForResult(intent, SAVE_REQUEST);
     }
 
 

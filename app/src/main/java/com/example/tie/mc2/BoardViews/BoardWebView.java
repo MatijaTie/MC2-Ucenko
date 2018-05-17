@@ -1,6 +1,9 @@
 package com.example.tie.mc2.BoardViews;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.util.Log;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -15,7 +18,7 @@ import java.util.ArrayList;
  * Created by Tie on 14-May-18.
  */
 
-public class BoardWebView extends WebView{
+public class BoardWebView extends WebView {
 
     String startingWebsite = "https://www.google.com/";
     ArrayList<String> bookmarks = new ArrayList<>();
@@ -24,6 +27,9 @@ public class BoardWebView extends WebView{
     public BoardWebView(Context context, RootView rootView) {
         super(context);
         initWeb();
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+
         this.rootView = rootView;
     }
 
@@ -72,6 +78,19 @@ public class BoardWebView extends WebView{
 
     public ArrayList<String> getBookmarks(){
         return bookmarks;
+    }
+    @Override
+    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+        if(focused){
+            rootView.showOptions(true);
+            Log.d("focus","ima");
+            Toast.makeText(getContext(),"hasFocus", Toast.LENGTH_SHORT).show();
+        }else{
+            rootView.showOptions(false);
+            Log.d("focus","nema");
+            Toast.makeText(getContext(),"nema focus", Toast.LENGTH_SHORT).show();
+        }
+        super.onFocusChanged(focused, direction, previouslyFocusedRect);
     }
 
 }

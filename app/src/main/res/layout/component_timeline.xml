@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
+<RelativeLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:maxWidth="50dp"
-    android:paddingTop="50dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-    >
-
-    <android.support.v7.widget.LinearLayoutCompat
-        android:background="@drawable/component_timeline_line"
+    <android.support.v7.widget.LinearLayoutCompat android:background="@drawable/component_timeline_line"
         android:id="@+id/component_timline_top_line_vliew"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginRight="62dp"
-        android:layout_marginLeft="10dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
 
-        ></android.support.v7.widget.LinearLayoutCompat>
+        xmlns:android="http://schemas.android.com/apk/res/android"/>
+    <LinearLayout
+        android:layout_marginTop="-7dp"
+        android:layout_marginEnd="60dp"
+        android:id="@+id/toolbar_child_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+
+    </LinearLayout>
+
+</RelativeLayout>
 
 
 
 
 
 
-</LinearLayout>
+
+
+
+

@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import com.example.tie.mc2.Listeners.ToolbarIconsTouchListener;
 import com.example.tie.mc2.R;
 import com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable;
+import com.example.tie.mc2.ToolbarComponents.MapComponentDraggable;
 import com.example.tie.mc2.ToolbarComponents.TextComponentDraggable;
 import com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable;
 import com.example.tie.mc2.ToolbarComponents.WebviewComponentDraggable;
@@ -50,9 +51,13 @@ public class FragmentToolbar extends Fragment {
         WebviewComponentDraggable webviewComponentDraggable = new WebviewComponentDraggable(getContext());
         webviewComponentDraggable.setOnTouchListener(new ToolbarIconsTouchListener(webviewComponentDraggable.getClass().toString()));
 
+        MapComponentDraggable mapComponentDraggable = new MapComponentDraggable(getContext());
+        mapComponentDraggable.setOnTouchListener(new ToolbarIconsTouchListener(mapComponentDraggable.getClass().toString()));
+
         toolbar.addView(timelineComponentDraggable);
         toolbar.addView(textComponentDraggable);
         toolbar.addView(imageComponentDraggable);
         toolbar.addView(webviewComponentDraggable);
+        toolbar.addView(mapComponentDraggable);
     }
 }

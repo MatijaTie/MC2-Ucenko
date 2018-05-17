@@ -2,6 +2,7 @@ package com.example.tie.mc2.BoardViews;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Rect;
 import android.icu.text.UnicodeSetSpanner;
 import android.os.Build;
 import android.util.Log;
@@ -44,6 +45,7 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
 
         //Inflate custom layout
         inflate(context, R.layout.board_component_holder, this);
+
 
         //inicijalizacija holdera za optionse viewa
         viewOptionsHolder = findViewById(R.id.view_options_holder);
@@ -197,6 +199,14 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
         return mainView;
     }
 
+
+    public void showOptions(boolean b){
+        if(b){
+            viewOptionsHolder.setVisibility(VISIBLE);
+        }else{
+            viewOptionsHolder.setVisibility(INVISIBLE);
+        }
+    }
 
 
 }

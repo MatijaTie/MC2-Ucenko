@@ -55,6 +55,11 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
         this.context = context;
         init();
     }
+    public BoardDrawingLayout(Context context) {
+        super(context);
+        this.context = context;
+        init();
+    }
 
     private void init(){
         setDrawingCacheEnabled(true);

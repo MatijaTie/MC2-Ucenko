@@ -30,11 +30,12 @@ import java.util.Iterator;
 
 import butterknife.ButterKnife;
 
+import static com.example.tie.mc2.StaticValues.DataKeys.FRAGMENT_BOARD_MAIN;
+import static com.example.tie.mc2.StaticValues.DataKeys.FRAGMENT_TOOLBAR_MAIN;
+
 public class BoardActivity extends AppCompatActivity {
-    public static final String FRAGMENT_BOARD_MAIN = "1";
-    public static final String FRAGMENT_TOOLBAR_MAIN = "2";
-    public static int CAMERA_REQUEST = 246;
-    public static int IMAGE_REQUEST = 22;
+
+
 
     FragmentBoard boardFragment;
     FragmentToolbar toolbarFragment;

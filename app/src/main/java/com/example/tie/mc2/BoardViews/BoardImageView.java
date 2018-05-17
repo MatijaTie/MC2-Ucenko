@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream;
  * Created by Tie on 18-Apr-18.
  */
 
-public class BoardImageView extends AppCompatImageView{
+public class BoardImageView extends AppCompatImageView {
     FragmentBoard parentFragment;
     String imageEncoded;
     Bitmap img;
@@ -47,6 +47,9 @@ public class BoardImageView extends AppCompatImageView{
 
 
     public String getImageEncoded() {
+        if(imageEncoded == null){
+            return "";
+        }
         return imageEncoded;
     }
 

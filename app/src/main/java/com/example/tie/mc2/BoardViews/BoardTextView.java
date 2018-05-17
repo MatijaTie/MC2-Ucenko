@@ -2,12 +2,15 @@ package com.example.tie.mc2.BoardViews;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.widget.TextViewCompat;
 import android.text.Editable;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,12 +24,19 @@ import com.example.tie.mc2.Dialogues.TextChangeDialogue;
 
 public class BoardTextView extends android.support.v7.widget.AppCompatEditText {
     int textSize, backgroundColor, textColor;
+    RootView rootView;
 
-    public BoardTextView(Context context) {
+    public BoardTextView(Context context, RootView rootView) {
         super(context);
+
+        this.rootView = rootView;
+
         setTypeface(Typeface.SERIF);
         setGravity(Gravity.START);
         setPadding(0,0,0,0);
+
+        setFocusable(true);
+        setFocusableInTouchMode(true);
 
         Drawable background = this.getBackground();
         if (background instanceof ColorDrawable) {
@@ -72,5 +82,19 @@ public class BoardTextView extends android.support.v7.widget.AppCompatEditText {
         return Color.TRANSPARENT;
     }
 
+    @Override
+    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+
+       if(focused){
+            rootView.showOptions(true);
+            Log.d("focus","ima");
+            Toast.makeText(getContext(),"hasFocus", Toast.LENGTH_SHORT).show();
+        }else{
+           rootView.showOptions(false);
+            Log.d("focus","nema");
+            Toast.makeText(getContext(),"nema focus", Toast.LENGTH_SHORT).show();
+        }
+        super.onFocusChanged(focused, direction, previouslyFocusedRect);
+    }
 }
 
