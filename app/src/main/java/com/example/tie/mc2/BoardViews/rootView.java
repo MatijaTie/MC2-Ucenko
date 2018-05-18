@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.tie.mc2.Fragments.FragmentBoard;
 import com.example.tie.mc2.R;
 
 /**
@@ -24,14 +25,14 @@ import com.example.tie.mc2.R;
  */
 
 public class RootView extends RelativeLayout implements View.OnTouchListener {
-    private RelativeLayout thisView;
     private View mainView;
 
     private FrameLayout mainComponentHolder;
-    private Button moveButton;
+    private Button moveButton, resisizeButton;
     private boolean touchFlag;
     private float MIN_WIDTH, MIN_HEIGHT;
     private LinearLayout viewOptionsHolder;
+    private FragmentBoard fragmentBoard;
 
 
     //minimalne dimenzije
@@ -45,6 +46,12 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
 
         //Inflate custom layout
         inflate(context, R.layout.board_component_holder, this);
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setSelected(true);
+            }
+        });
 
 
         //inicijalizacija holdera za optionse viewa
@@ -55,19 +62,17 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
         mainComponentHolder = findViewById(R.id.view_main_frame);
         mainComponentHolder.setFocusable(true);
 
-        //reference to rootView class
-        thisView = this;
-        thisView.setOnTouchListener(this);
+        setOnTouchListener(this);
 
         //initiate move view
         moveButton = findViewById(R.id.view_drag_button);
         moveButton.bringToFront();
-
         moveButton.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:
+                        requestFocus();
                         animateView();
                         return true;
                 }
@@ -75,7 +80,9 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
             }
         });
 
-        this.setFocusableInTouchMode(true);
+        resisizeButton = findViewById(R.id.view_resize_button);
+
+        setFocusableInTouchMode(true);
 
     }
 
@@ -92,8 +99,9 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                Log.d("root view", "down");
                 touchFlag = true;
-                thisView.bringToFront();
+                bringToFront();
                 return true;
 
             case MotionEvent.ACTION_MOVE:
@@ -124,6 +132,8 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
      */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        requestFocus();
+        Log.d("intercepting","intercepting");
         if (getViewTouchPosition(this, ev) == -1) {
             return false;
         } else {
@@ -190,9 +200,10 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
     private void animateView(){
         ClipData data = ClipData.newPlainText("", "");
         DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(
-                thisView);
-        thisView.startDrag(data, shadowBuilder, thisView, 0);
-        thisView.setVisibility(View.INVISIBLE);
+                this);
+        startDrag(data, shadowBuilder, this, 0);
+        setVisibility(View.INVISIBLE);
+
     }
 
     public View getMainView() {
@@ -203,11 +214,24 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
     public void showOptions(boolean b){
         if(b){
             viewOptionsHolder.setVisibility(VISIBLE);
+            resisizeButton.setVisibility(VISIBLE);
         }else{
             viewOptionsHolder.setVisibility(INVISIBLE);
+            resisizeButton.setVisibility(INVISIBLE);
         }
     }
 
+
+    @Override
+    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+        if(focused){
+            showOptions(true);
+        }else{
+            showOptions(false);
+
+        }
+        super.onFocusChanged(focused, direction, previouslyFocusedRect);
+    }
 
 }
 

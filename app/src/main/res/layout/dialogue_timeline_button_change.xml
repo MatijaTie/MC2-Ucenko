@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_margin="15dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/dialogue_peace"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/ic_timeline_buttone_peace"/>
+            <View
+                android:id="@+id/dialogue_war"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/ic_timeline_buttone_fight"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/dialogue_scroll"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/ic_timeline_button_scroll"/>
+            <View
+                android:id="@+id/dialogue_crown"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/ic_timeline_buttone_crown"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</FrameLayout>

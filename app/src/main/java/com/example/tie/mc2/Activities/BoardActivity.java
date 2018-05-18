@@ -1,6 +1,9 @@
 package com.example.tie.mc2.Activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.inputmethodservice.InputMethodService;
+import android.inputmethodservice.Keyboard;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -8,6 +11,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -64,18 +70,49 @@ public class BoardActivity extends AppCompatActivity {
         if (data != null) {
             uri = data.getData();
         }
+
         //Inicijalizacija fragmenta
         boardFragment = FragmentBoard.newInstance(uri);
         toolbarFragment = new FragmentToolbar();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
 
-
-
-
         fragmentTransaction.add(R.id.holder_main_board, boardFragment, FRAGMENT_BOARD_MAIN);
         fragmentTransaction.add(R.id.holder_main_toolbar, toolbarFragment, FRAGMENT_TOOLBAR_MAIN)
                 .commit();
 
+    }
+
+    private void adjustKeyboardKeyHeight (MyKeyboard keyboard, int newKeyHeight) {
+        int oldKeyHeight = keyboard.getKeyHeight();
+        int verticalGap = keyboard.getVerticalGap();
+        int rows = 0;
+        for (Keyboard.Key key : keyboard.getKeys()) {
+            key.height = newKeyHeight;
+            int row = (key.y + verticalGap) / (oldKeyHeight + verticalGap);
+            key.y = row * newKeyHeight + (row - 1) * verticalGap;
+            rows = Math.max(rows, row + 1);
+        }
+        keyboard.setHeight(rows * newKeyHeight + (rows - 1) * verticalGap);
+    }
+
+    private static class MyKeyboard extends Keyboard {
+        private int height;
+        MyKeyboard (Context context, int xmlLayoutResId) {
+            super(context, xmlLayoutResId);
+            height = super.getHeight();
+        }
+        @Override public int getKeyHeight() {
+            return super.getKeyHeight();
+        }
+        @Override public int getVerticalGap() {
+            return super.getVerticalGap();
+        }
+        public void setHeight (int newHeight) {
+            height = newHeight;
+        }
+        @Override public int getHeight() {
+            return height;
+        }
     }
 }

@@ -12,6 +12,7 @@ import android.graphics.PorterDuffXfermode;
 import android.media.ThumbnailUtils;
 import android.util.AttributeSet;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -66,6 +67,9 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
         //setBackgroundColor(Color.TRANSPARENT);
         isPainting = false;
         isErasing = false;
+
+        setFocusable(true);
+        setFocusableInTouchMode(true);
 
         paint = new Paint();
         paint.setAntiAlias(true);
@@ -206,6 +210,7 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                requestFocus();
                 removeSoftKeyboard(v);
                 if(isPainting || isErasing) {
                     touch_start(x, y);
@@ -236,5 +241,6 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
         byte[] b = baos.toByteArray();
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
+
 
 }

@@ -6,7 +6,7 @@
     android:paddingTop="50dp"
 
     >
-    <Button
+    <FrameLayout
         android:id="@+id/timelineBtn"
         android:layout_centerHorizontal="true"
         android:layout_width="50dp"
@@ -14,7 +14,15 @@
         android:layout_alignParentTop="true"
         android:background="@drawable/component_timline_timestamp"
 
-        />
+        >
+        <View
+            android:id="@+id/timeline_icon_holder"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            >
+
+        </View>
+    </FrameLayout>
 
     <EditText
         android:id="@+id/board_timeline_part_year"

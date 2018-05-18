@@ -10,8 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
      >
-        <activity android:name=".Activities.BoardActivity" android:windowSoftInputMode="adjustPan" android:screenOrientation="landscape"/>
-        <activity android:name=".Activities.MenuActivity" android:windowSoftInputMode="adjustPan" android:screenOrientation="portrait">
+        <activity android:name=".Activities.BoardActivity" android:windowSoftInputMode="adjustPan|adjustResize" android:screenOrientation="landscape"/>
+        <activity android:name=".Activities.MenuActivity" android:windowSoftInputMode="adjustPan|adjustResize" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

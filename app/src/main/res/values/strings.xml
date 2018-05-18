@@ -5,4 +5,5 @@
     <string name="menu_load_ploca">Otvori ploču</string>
     <string name="menu_postavke">Postavke</string>
     <string name="pripremamo_plo_u">Pripremamo ploču...</string>
+    <string name="tutorial">Tutorial</string>
 </resources>

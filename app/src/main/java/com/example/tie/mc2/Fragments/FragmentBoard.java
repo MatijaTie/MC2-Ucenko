@@ -20,6 +20,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -94,6 +95,7 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
     Point point;
     private BoardDrawingLayout drawingLayout;
     private View palette;
+    private RelativeLayout boardLayout;
 
     private ArrayList<RootView> childRootViews;
 
@@ -131,6 +133,16 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
         boardDrawing = view.findViewById(R.id.board_drawing);
         boardDrawing.setOnDragListener(this);
         boardDrawing.setBackgroundColor(Color.TRANSPARENT);
+        boardDrawing.setFocusable(true);
+        boardDrawing.setFocusableInTouchMode(true);
+        boardDrawing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boardDrawing.requestFocus();
+            }
+        });
+
+        boardLayout = view.findViewById(R.id.fragment_ploca_layout);
 
         FrameLayout trash = view.findViewById(R.id.trash);
         trash.bringToFront();
@@ -373,7 +385,7 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
     private void createDraggedView(DragEvent event, String sizeString, String typeString){
         float posX, posY, x, y;
         float offsetX,offsetY;
-        RootView rootView;
+        RootView rootView = null;
         Log.d("pravimo",""+childRootViews.size());
 
 
@@ -422,7 +434,7 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
             case INDENTIFIER_IMAGE://class com.example.tie.mc2.ToolbarComponents.ImageComponentDraggable
                 rootView = getRootViewWithParams(x, y);
 
-                BoardImageView boardImageView = new BoardImageView(context, this);
+                BoardImageView boardImageView = new BoardImageView(context, this, rootView);
                 OptionsImageTakePhotoButton optionsImageTakePhotoButton = new OptionsImageTakePhotoButton(getContext(),boardImageView);
                 OptionsImageFolderButton optionsImageFolderButton = new OptionsImageFolderButton(getContext(),boardImageView);
                 OptionsAllBorderButton optionsAllBorderButton3 = new OptionsAllBorderButton(context, rootView);
@@ -463,6 +475,10 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
                 break;
 
         }
+        if(rootView != null){
+            rootView.requestFocus();
+        }
+
     }
 
 
@@ -487,6 +503,7 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
                 draggedView.setY(newPosY);
             }
             draggedView.setVisibility(View.VISIBLE);
+            draggedView.requestFocus();
         }
 
     }
@@ -575,6 +592,8 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
                             JSONObject timelineObjectData = new JSONObject();
                             timelineObjectData.put("textPart",b.getTextPart());
                             timelineObjectData.put("yearPart",b.getYearPart());
+                            timelineObjectData.put("marginLeft",b.getLeftMargin());
+                            timelineObjectData.put("icon",b.getIcon());
                             childObjectData3.put("timelinePart"+no, timelineObjectData);
                             no++;
                         }

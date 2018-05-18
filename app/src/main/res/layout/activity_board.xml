@@ -25,7 +25,7 @@
         android:id="@+id/holder_main_board"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="15"
+        android:layout_weight="18"
         android:background="@color/colorPrimary"
         >
     </FrameLayout>

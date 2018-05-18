@@ -28,15 +28,12 @@ public class BoardTextView extends android.support.v7.widget.AppCompatEditText {
 
     public BoardTextView(Context context, RootView rootView) {
         super(context);
-
         this.rootView = rootView;
 
         setTypeface(Typeface.SERIF);
         setGravity(Gravity.START);
         setPadding(0,0,0,0);
 
-        setFocusable(true);
-        setFocusableInTouchMode(true);
 
         Drawable background = this.getBackground();
         if (background instanceof ColorDrawable) {
@@ -84,15 +81,10 @@ public class BoardTextView extends android.support.v7.widget.AppCompatEditText {
 
     @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-
-       if(focused){
+        if(focused){
             rootView.showOptions(true);
-            Log.d("focus","ima");
-            Toast.makeText(getContext(),"hasFocus", Toast.LENGTH_SHORT).show();
         }else{
-           rootView.showOptions(false);
-            Log.d("focus","nema");
-            Toast.makeText(getContext(),"nema focus", Toast.LENGTH_SHORT).show();
+            rootView.showOptions(false);
         }
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
     }

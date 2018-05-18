@@ -65,7 +65,6 @@ public class TextChangeDialogue extends Dialog{
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialogue_text_modifier);
-
         initialize();
 
     }

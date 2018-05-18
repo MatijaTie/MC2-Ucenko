@@ -33,15 +33,15 @@
 
             <Button
                 android:layout_gravity="center"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
                 android:background="@drawable/menu_new_board_image"
                 android:translationZ="10dp"
                 />
             <TextView
 
-                android:layout_width="350dp"
-                android:layout_height="80dp"
+                android:layout_width="250dp"
+                android:layout_height="60dp"
                 android:text="@string/menu_nova_ploca"
                 android:textSize="30sp"
                 android:layout_gravity="center"
@@ -66,14 +66,14 @@
 
             <Button
                 android:layout_gravity="center"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
                 android:background="@drawable/menu_load_board_image"
                 android:translationZ="10dp"
                 />
             <TextView
-                android:layout_width="350dp"
-                android:layout_height="80dp"
+                android:layout_width="250dp"
+                android:layout_height="60dp"
                 android:text="@string/menu_load_ploca"
                 android:textSize="30sp"
                 android:layout_gravity="center"
@@ -86,6 +86,36 @@
 
 
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/menu_tutorial"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+
+            >
+
+            <Button
+                android:layout_gravity="center"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:background="@drawable/menu_tutorial"
+                android:translationZ="10dp"
+                />
+            <TextView
+                android:layout_width="250dp"
+                android:layout_height="60dp"
+                android:text="@string/tutorial"
+                android:textSize="30sp"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:layout_marginStart="-25dp"
+                android:background="@drawable/menu_board_background"
+                android:textColor="@color/menuTextColor"
+                />
+        </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/menu_options"
@@ -98,14 +128,14 @@
 
             <Button
                 android:layout_gravity="center"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
                 android:background="@drawable/menu_options_image"
                 android:translationZ="10dp"
                 />
             <TextView
-                android:layout_width="350dp"
-                android:layout_height="80dp"
+                android:layout_width="250dp"
+                android:layout_height="60dp"
                 android:text="@string/menu_postavke"
                 android:textSize="30sp"
                 android:layout_gravity="center"

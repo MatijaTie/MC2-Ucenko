@@ -78,14 +78,13 @@ public class ViewBuilder {
         }
 
 
-        BoardImageView boardImageView = new BoardImageView(context, fragment);
+        BoardImageView boardImageView = new BoardImageView(context, fragment, rootView);
         OptionsImageTakePhotoButton optionsImageTakePhotoButton = new OptionsImageTakePhotoButton(context,boardImageView);
         OptionsImageFolderButton optionsImageFolderButton = new OptionsImageFolderButton(context,boardImageView);
         OptionsAllBorderButton optionsAllBorderButton3 = new OptionsAllBorderButton(context, rootView);
         if(image != null){
             boardImageView.setImage(image);
         }
-
 
         rootView.addViewToViewOptionsHolder(optionsAllBorderButton3);
         rootView.addViewToHolder(boardImageView);
@@ -103,8 +102,9 @@ public class ViewBuilder {
             JSONObject jTimelineData = (JSONObject) jData.get(key);
             String textPart = jTimelineData.getString("textPart");
             String yearPart = jTimelineData.getString("yearPart");
-            Log.d("timeline text",textPart);
-            boardTimelineView.addTimelineView(yearPart, textPart);
+            int icon = jTimelineData.getInt("icon");
+            int marginLeft = jTimelineData.getInt("marginLeft");
+            boardTimelineView.addTimelineView(yearPart, textPart, marginLeft, icon);
 
         }
         OptionsTimlineAddButton OptionsTimlineAddButton = new OptionsTimlineAddButton(context, boardTimelineView);

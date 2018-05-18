@@ -25,5 +25,10 @@ public final class DataKeys {
     public static final String FRAGMENT_BOARD_MAIN = "1";
     public static final String FRAGMENT_TOOLBAR_MAIN = "2";
 
+    public static final int TIMELINE_ICON_WAR = 11;
+    public static final int TIMELINE_ICON_PEACE = 22;
+    public static final int TIMELINE_ICON_CROWN = 33;
+    public static final int TIMELINE_ICON_SCROLL = 44;
+
 
 }

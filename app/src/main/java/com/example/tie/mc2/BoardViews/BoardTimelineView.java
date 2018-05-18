@@ -11,6 +11,8 @@ import com.example.tie.mc2.R;
 
 import java.util.ArrayList;
 
+import static com.example.tie.mc2.StaticValues.DataKeys.TIMELINE_ICON_PEACE;
+
 /**
  * Created by Tie on 21-Apr-18.
  */
@@ -45,14 +47,15 @@ public class BoardTimelineView extends LinearLayout {
         bringChildToFront(newTimlineButton);
 
     }
-    public void addTimelineView(String yearPart, String textPart){
+    public void addTimelineView(String yearPart, String textPart, int marginLeft, int icon){
         BoardTimelineViewButton newTimlineButton = new BoardTimelineViewButton(getContext(), this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(250, ViewGroup.LayoutParams.MATCH_PARENT);
         params.gravity = Gravity.CENTER;
-        params.setMargins(10,10,10,10);
+        params.setMargins(marginLeft,10,10,10);
         newTimlineButton.setLayoutParams(params);
         newTimlineButton.setTextPart(textPart);
         newTimlineButton.setYearPart(yearPart);
+        newTimlineButton.setIcon(icon);
         childLayout.addView(newTimlineButton);
         childHolder.add(newTimlineButton);
         bringChildToFront(newTimlineButton);
@@ -79,6 +82,4 @@ public class BoardTimelineView extends LinearLayout {
         }
 
     }
-
-
 }
