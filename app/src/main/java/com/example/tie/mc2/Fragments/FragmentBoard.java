@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 
 import com.example.tie.mc2.BoardViews.BoardDrawingLayout;
+import com.example.tie.mc2.BoardViews.BoardMapDrawingLayout;
 import com.example.tie.mc2.BoardViews.BoardTextView;
 import com.example.tie.mc2.BoardViews.BoardTimelineView;
 import com.example.tie.mc2.BoardViews.BoardImageView;
@@ -40,6 +41,10 @@ import com.example.tie.mc2.Dialogues.ColorChangeDialogue;
 import com.example.tie.mc2.OptionButtons.OptionsAllBorderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageFolderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageTakePhotoButton;
+import com.example.tie.mc2.OptionButtons.OptionsMapChangeColorButton;
+import com.example.tie.mc2.OptionButtons.OptionsMapDrawToggleButton;
+import com.example.tie.mc2.OptionButtons.OptionsMapEraseToggleButton;
+import com.example.tie.mc2.OptionButtons.OptionsMapNewMap;
 import com.example.tie.mc2.OptionButtons.OptionsTextResizeButton;
 import com.example.tie.mc2.OptionButtons.OptionsTimelineRemoveButton;
 import com.example.tie.mc2.OptionButtons.OptionsTimlineAddButton;
@@ -73,6 +78,8 @@ import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TEXT_CLASS;
 import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TIMELINE;
 import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TIMELINE_CLASS;
 import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_WEBVIEW;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_WEB_CLASS;
+import static com.example.tie.mc2.StaticValues.DataKeys.MAP_CROATIA;
 import static com.example.tie.mc2.StaticValues.DataKeys.SAVE_REQUEST;
 
 
@@ -81,20 +88,18 @@ import static com.example.tie.mc2.StaticValues.DataKeys.SAVE_REQUEST;
  */
 
 public class FragmentBoard extends android.support.v4.app.Fragment implements View.OnDragListener{
-
     private BoardImageView lastImageView;
     public Bitmap lastimageBitmap;
     private ProgressBar progressBarLine;
-    private LinearLayout loadingScreen;
-    private RelativeLayout boardMain, boardViews;
+    private LinearLayout loadingScreen, fingerOptionsHolder;
+    private RelativeLayout boardMain;
     private BoardDrawingLayout boardDrawing;
     private JSONObject JrootView, Jfragment;
-    private FragmentBoard fragment;
+    private FrameLayout trash;
     private Context context;
     private ToggleButton brush, eraser;
-    Point point;
-    private BoardDrawingLayout drawingLayout;
-    private View palette;
+    private Point point;
+    private View palette, save;
     private RelativeLayout boardLayout;
 
     private ArrayList<RootView> childRootViews;
@@ -144,9 +149,11 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
 
         boardLayout = view.findViewById(R.id.fragment_ploca_layout);
 
-        FrameLayout trash = view.findViewById(R.id.trash);
+        trash = view.findViewById(R.id.trash);
         trash.bringToFront();
         trash.setOnDragListener(new TrashOnDragListener(trash, this));
+
+        fingerOptionsHolder = view.findViewById(R.id.finger_options_holder);
 
         brush = view.findViewById(R.id.paint_brush_button);
         brush.setText(null);
@@ -194,7 +201,7 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
         loadingScreen = view.findViewById(R.id.board_loading_layout);
         progressBarLine = view.findViewById(R.id.progressBarLine);
 
-        View save = view.findViewById(R.id.main_save);
+        save = view.findViewById(R.id.main_save);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -311,6 +318,7 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
                 return true;
 
             case DragEvent.ACTION_DROP:
+                draggedView.setVisibility(View.VISIBLE);
                 if (event.getClipData().getItemAt(0).getText().length() > 0){
                     sizeString = event.getClipData().getItemAt(0).getText().toString();
                     typeString = event.getClipData().getDescription().getLabel().toString();
@@ -318,7 +326,6 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
 
                 }
                 else{
-                    //Mozda posaviti na else if sa if this == view.getparent()
                     if(draggedView.getParent()== boardDrawing) {
                         setDraggedViewLocation(draggedView, point);
                     }
@@ -326,7 +333,7 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
                 return true;
 
             case DragEvent.ACTION_DRAG_EXITED:
-                   draggedView.setVisibility(View.VISIBLE);
+                   //draggedView.setVisibility(View.VISIBLE);
                    return true;
         }
         return true;
@@ -463,16 +470,28 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
             case INDENTIFIER_MAP:
                 rootView = getRootViewWithParams(x, y);
 
-                BoardDrawingLayout boardDrawingLayout = new BoardDrawingLayout(context);
-                boardDrawingLayout.setBackgroundResource(R.drawable.map_world);
-                boardDrawingLayout.setPainting(true);
+                BoardMapDrawingLayout boardMapDrawingLayout = new BoardMapDrawingLayout(context);
+                boardMapDrawingLayout.setMap(MAP_CROATIA);
 
                 OptionsAllBorderButton optionsAllBorderButton4 = new OptionsAllBorderButton(context, rootView);
-                rootView.addViewToViewOptionsHolder(optionsAllBorderButton4);
+                OptionsMapDrawToggleButton optionsMapDrawToggleButton = new OptionsMapDrawToggleButton(context, boardMapDrawingLayout);
+                OptionsMapEraseToggleButton optionsMapEraseToggleButton = new OptionsMapEraseToggleButton(context, boardMapDrawingLayout);
+                OptionsMapNewMap optionsMapNewMap = new OptionsMapNewMap(context, boardMapDrawingLayout);
+                OptionsMapChangeColorButton optionsMapChangeColorButton = new OptionsMapChangeColorButton(context, boardMapDrawingLayout);
 
-                rootView.addViewToHolder(boardDrawingLayout);
+                optionsMapEraseToggleButton.setSibilingButton(optionsMapDrawToggleButton);
+                optionsMapDrawToggleButton.setSibilingButton(optionsMapEraseToggleButton);
+
+                rootView.addViewToViewOptionsHolder(optionsAllBorderButton4);
+                rootView.addViewToViewOptionsHolder(optionsMapNewMap);
+                rootView.addViewToViewOptionsHolder(optionsMapChangeColorButton);
+                rootView.addViewToViewOptionsHolder(optionsMapDrawToggleButton);
+                rootView.addViewToViewOptionsHolder(optionsMapEraseToggleButton);
+
+                rootView.addViewToHolder(boardMapDrawingLayout);
                 childRootViews.add(rootView);
                 break;
+
 
         }
         if(rootView != null){
@@ -534,6 +553,7 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
             return null;
         }
     }
+
     public void writeToJson() throws JSONException {
         int counter = 0;
         int posX, posY;
@@ -601,7 +621,7 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
                         Log.d("jsonamo chobj3",JrootViewObject.toString());
                         break;
 
-                    case INDENTIFIER_MAP_CLASS:
+                    case INDENTIFIER_WEB_CLASS:
                         JSONObject childObjectData4 = new JSONObject();
                         BoardWebView v4 = (BoardWebView) r.getMainView();
                         ArrayList<String> dataArray = v4.getBookmarks();
@@ -613,6 +633,15 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
                         }
                         JrootViewObject.put("child",childObjectData4);
                         break;
+
+                    case INDENTIFIER_MAP_CLASS:
+                        JSONObject childObjectData5 = new JSONObject();
+                        BoardMapDrawingLayout v5 = (BoardMapDrawingLayout) r.getMainView();
+                        String map = v5.saveDrawing();
+                        Log.d("map",map);
+                        childObjectData5.put("map",map);
+                        JrootViewObject.put("child", childObjectData5);
+                        break;
                 }
                 this.JrootView.put("view"+counter, JrootViewObject);
                 Log.d("jsonamo jroot", this.JrootView.toString());
@@ -622,6 +651,9 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                trash.setVisibility(View.INVISIBLE);
+                save.setVisibility(View.INVISIBLE);
+                fingerOptionsHolder.setVisibility(View.INVISIBLE);
                 for(RootView v : childRootViews){
                     v.setVisibility(View.INVISIBLE);
                 }
@@ -631,6 +663,9 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                fingerOptionsHolder.setVisibility(View.VISIBLE);
+                trash.setVisibility(View.VISIBLE);
+                save.setVisibility(View.VISIBLE);
                 for(RootView v : childRootViews){
                     v.setVisibility(View.VISIBLE);
                 }
@@ -645,8 +680,6 @@ public class FragmentBoard extends android.support.v4.app.Fragment implements Vi
         intent.setType("application/.tie");
         startActivityForResult(intent, SAVE_REQUEST);
     }
-
-
 
     public void writeFile(Uri location,  String data){
         String locationStr = DocumentsContract.getDocumentId(location);

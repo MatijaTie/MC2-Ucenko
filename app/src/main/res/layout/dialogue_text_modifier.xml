@@ -39,7 +39,16 @@
         android:layout_gravity="center"
         android:layout_height="wrap_content"
         />
-
+    <CheckBox
+        android:id="@+id/dialogue_transparent_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="sans-serif"
+        android:layout_weight="1"
+        android:text="Prozirna pozadina" />
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
@@ -109,16 +118,7 @@
 
 
     </LinearLayout>
-    <CheckBox
-        android:id="@+id/dialogue_transparent_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="20dp"
-        android:layout_marginTop="15dp"
-        android:fontFamily="sans-serif"
-        android:layout_weight="1"
-        android:text="Prozirna pozadina" />
+
 
     <LinearLayout
         android:orientation="horizontal"

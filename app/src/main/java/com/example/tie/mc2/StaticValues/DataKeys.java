@@ -9,7 +9,7 @@ public final class DataKeys {
     public static final String INDENTIFIER_TEXT_CLASS = "class com.example.tie.mc2.BoardViews.BoardTextView";
     public static final String INDENTIFIER_IMAGE_CLASS = "class com.example.tie.mc2.BoardViews.BoardImageView";
     public static final String INDENTIFIER_WEB_CLASS = "class com.example.tie.mc2.BoardViews.BoardWebView";
-    public static final String INDENTIFIER_MAP_CLASS = "class com.example.tie.mc2.BoardViews.BoardWebView";
+    public static final String INDENTIFIER_MAP_CLASS = "class com.example.tie.mc2.BoardViews.BoardMapDrawingLayout";
 
     public static final String INDENTIFIER_TIMELINE = "class com.example.tie.mc2.ToolbarComponents.TimelineComponentDraggable";
     public static final String INDENTIFIER_TEXT = "class com.example.tie.mc2.ToolbarComponents.TextComponentDraggable";
@@ -29,6 +29,10 @@ public final class DataKeys {
     public static final int TIMELINE_ICON_PEACE = 22;
     public static final int TIMELINE_ICON_CROWN = 33;
     public static final int TIMELINE_ICON_SCROLL = 44;
+
+    public static final int MAP_CROATIA = 111;
+    public static final int MAP_EUROPE = 222;
+    public static final int MAP_WORLD = 333;
 
 
 }

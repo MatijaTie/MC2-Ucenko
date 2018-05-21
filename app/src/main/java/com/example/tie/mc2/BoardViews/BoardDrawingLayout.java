@@ -9,16 +9,20 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 /**
  * Created by Tie on 12-May-18.
@@ -28,28 +32,14 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
         private Boolean isPainting, isErasing;
         public int width;
         public int height;
-        private Bitmap mBitmap;
+        private Bitmap mBitmap, uuu;
         private Canvas mCanvas;
         private Path mPath;
+
         private Paint mBitmapPaint;
         Context context;
         private Paint circlePaint, paint;
         private Path circlePath;
-
-
-    public BoardDrawingLayout(Context context, AttributeSet attrs, int defStyleAttr, int width) {
-        super(context, attrs, defStyleAttr);
-        this.width = width;
-        this.context = context;
-        init();
-    }
-
-    public BoardDrawingLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes, int width) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        this.width = width;
-        this.context = context;
-        init();
-    }
 
     public BoardDrawingLayout(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
@@ -64,6 +54,7 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
 
     private void init(){
         setDrawingCacheEnabled(true);
+
         //setBackgroundColor(Color.TRANSPARENT);
         isPainting = false;
         isErasing = false;
@@ -103,7 +94,6 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
     }
 
     public void setDrawingColor(int color){
-
         paint.setColor(color);
     }
 
@@ -158,26 +148,32 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
     protected void onSizeChanged(int w, int h, int oldw, int oldh)
     {
         super.onSizeChanged(w, h, oldw, oldh);
+        Log.d("size chaned","size ch");
 
         width = w;
         height = h;
 
         mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
+
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Log.d("onDraw","draw");
         super.onDraw(canvas);
         canvas.drawBitmap( mBitmap, 0, 0, mBitmapPaint);
         canvas.drawPath( mPath,  paint);
         canvas.drawPath( circlePath,  circlePaint);
+
+
     }
 
     private float mX, mY;
     private static final float TOUCH_TOLERANCE = 5;
 
     private void touch_start(float x, float y) {
+
         mPath.reset();
         mPath.moveTo(x, y);
         mX = x;
@@ -197,10 +193,12 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
     }
 
     private void touch_up() {
+
         mPath.lineTo(mX, mY);
         circlePath.reset();
         mCanvas.drawPath(mPath,  paint);
         mPath.reset();
+
     }
 
     @Override
@@ -233,6 +231,7 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
         return true;
     }
 
+
     public String saveDrawing()
     {
         Bitmap bitmap = getDrawingCache();
@@ -241,6 +240,7 @@ public class BoardDrawingLayout extends RelativeLayout implements View.OnTouchLi
         byte[] b = baos.toByteArray();
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
+
 
 
 }

@@ -6,6 +6,6 @@
     android:thickness="35dp"
     android:useLevel="false">
 
-    <solid android:color="@color/animateButton" />
+    <solid android:color="@color/optionsBorderButtonColor" />
 
 </shape>

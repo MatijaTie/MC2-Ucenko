@@ -84,11 +84,9 @@ public class BoardWebView extends WebView {
         if(focused){
             rootView.showOptions(true);
             Log.d("focus","ima");
-            Toast.makeText(getContext(),"hasFocus", Toast.LENGTH_SHORT).show();
         }else{
             rootView.showOptions(false);
             Log.d("focus","nema");
-            Toast.makeText(getContext(),"nema focus", Toast.LENGTH_SHORT).show();
         }
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
     }

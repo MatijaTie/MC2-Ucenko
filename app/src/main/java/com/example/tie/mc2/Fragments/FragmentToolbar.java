@@ -21,7 +21,7 @@ import com.example.tie.mc2.ToolbarComponents.WebviewComponentDraggable;
  * Created by Tie on 12-Mar-18.
  */
 
-public class FragmentToolbar extends Fragment {
+public class FragmentToolbar extends android.support.v4.app.Fragment {
     LinearLayout toolbar;
 
 

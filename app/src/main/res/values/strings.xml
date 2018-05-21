@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MC2</string>
+    <string name="app_name">Učenko</string>
     <string name="dialogue_text_standardtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
     <string name="menu_nova_ploca">Nova ploča</string>
     <string name="menu_load_ploca">Otvori ploču</string>

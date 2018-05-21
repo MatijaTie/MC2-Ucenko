@@ -86,6 +86,9 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
 
     }
 
+    public void hideOptionHolder(){
+        viewOptionsHolder.setVisibility(INVISIBLE);
+    }
 
     public void addViewToHolder(View v){
         mainComponentHolder.addView(v, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -133,12 +136,11 @@ public class RootView extends RelativeLayout implements View.OnTouchListener {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         requestFocus();
-        Log.d("intercepting","intercepting");
+
         if (getViewTouchPosition(this, ev) == -1) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     public int getViewTouchPosition(View v, MotionEvent event) {

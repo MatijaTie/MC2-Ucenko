@@ -1,4 +1,7 @@
 package com.example.tie.mc2.BoardViews;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.provider.DocumentsContract;
 import android.support.v4.app.Fragment;
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -12,6 +15,10 @@ import com.example.tie.mc2.Fragments.FragmentBoard;
 import com.example.tie.mc2.OptionButtons.OptionsAllBorderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageFolderButton;
 import com.example.tie.mc2.OptionButtons.OptionsImageTakePhotoButton;
+import com.example.tie.mc2.OptionButtons.OptionsMapChangeColorButton;
+import com.example.tie.mc2.OptionButtons.OptionsMapDrawToggleButton;
+import com.example.tie.mc2.OptionButtons.OptionsMapEraseToggleButton;
+import com.example.tie.mc2.OptionButtons.OptionsMapNewMap;
 import com.example.tie.mc2.OptionButtons.OptionsTextResizeButton;
 import com.example.tie.mc2.OptionButtons.OptionsTimlineAddButton;
 import com.example.tie.mc2.OptionButtons.OptionsWebviewAddBookmarkButton;
@@ -26,6 +33,7 @@ import java.util.Iterator;
 
 import static com.example.tie.mc2.StaticValues.DataKeys.FRAGMENT_BOARD_MAIN;
 import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_IMAGE_CLASS;
+import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_MAP_CLASS;
 import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TEXT_CLASS;
 import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_TIMELINE_CLASS;
 import static com.example.tie.mc2.StaticValues.DataKeys.INDENTIFIER_WEB_CLASS;
@@ -72,7 +80,6 @@ public class ViewBuilder {
         Bitmap image = null;
         if( jData.getString("image") != null){
             String str = jData.getString("image");
-
             byte[] decodeString = Base64.decode(str, Base64.DEFAULT);
             image = BitmapFactory.decodeByteArray(decodeString, 0, decodeString.length);
         }
@@ -143,6 +150,43 @@ public class ViewBuilder {
 
         return rootView;
     }
+
+    private RootView createMapClass(final RootView rootView, final JSONObject jData)throws JSONException{
+        Bitmap map = null;
+        Drawable drawable = null;
+        if( jData.getString("map") != null){
+            String str = jData.getString("map");
+            byte[] decodeString = Base64.decode(str, Base64.DEFAULT);
+            map = BitmapFactory.decodeByteArray(decodeString, 0, decodeString.length);
+        }
+        if(map != null){
+            drawable = new BitmapDrawable(context.getResources(),map);
+        }
+
+        BoardMapDrawingLayout boardMapDrawingLayout = new BoardMapDrawingLayout(context);
+        boardMapDrawingLayout.setBackground(drawable);
+
+        OptionsAllBorderButton optionsAllBorderButton4 = new OptionsAllBorderButton(context, rootView);
+        OptionsMapDrawToggleButton optionsMapDrawToggleButton = new OptionsMapDrawToggleButton(context, boardMapDrawingLayout);
+        OptionsMapEraseToggleButton optionsMapEraseToggleButton = new OptionsMapEraseToggleButton(context, boardMapDrawingLayout);
+        OptionsMapNewMap optionsMapNewMap = new OptionsMapNewMap(context, boardMapDrawingLayout);
+        OptionsMapChangeColorButton optionsMapChangeColorButton = new OptionsMapChangeColorButton(context, boardMapDrawingLayout);
+
+        optionsMapEraseToggleButton.setSibilingButton(optionsMapDrawToggleButton);
+        optionsMapDrawToggleButton.setSibilingButton(optionsMapEraseToggleButton);
+
+        rootView.addViewToViewOptionsHolder(optionsAllBorderButton4);
+        rootView.addViewToViewOptionsHolder(optionsMapNewMap);
+        rootView.addViewToViewOptionsHolder(optionsMapChangeColorButton);
+        rootView.addViewToViewOptionsHolder(optionsMapDrawToggleButton);
+        rootView.addViewToViewOptionsHolder(optionsMapEraseToggleButton);
+
+
+
+        rootView.addViewToHolder(boardMapDrawingLayout);
+
+        return rootView;
+    }
     public RootView buildView(JSONObject jView){
         try {
             String viewClass = jView.getString("class");
@@ -158,7 +202,7 @@ public class ViewBuilder {
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
             rootView.setLayoutParams(params);
             Log.d("json builder",jView.toString());
-
+            rootView.hideOptionHolder();
             switch (viewClass){
                 case INDENTIFIER_TEXT_CLASS:
                     return createTextClass(rootView, jData);
@@ -171,6 +215,9 @@ public class ViewBuilder {
 
                 case INDENTIFIER_WEB_CLASS:
                     return createWebClass(rootView, jData);
+
+                case INDENTIFIER_MAP_CLASS:
+                    return createMapClass(rootView, jData);
             }
         } catch (JSONException e) {
             e.printStackTrace();

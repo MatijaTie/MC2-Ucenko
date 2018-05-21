@@ -14,7 +14,6 @@ import com.example.tie.mc2.BoardViews.BoardTimelineView;
 import com.example.tie.mc2.BoardViews.BoardTimelineViewButton;
 import com.example.tie.mc2.R;
 
-import butterknife.OnTouch;
 
 import static com.example.tie.mc2.StaticValues.DataKeys.TIMELINE_ICON_CROWN;
 import static com.example.tie.mc2.StaticValues.DataKeys.TIMELINE_ICON_PEACE;
@@ -47,7 +46,6 @@ public class TimelineButtonChangeDialogue extends Dialog implements OnTouchListe
         war.setOnTouchListener(this);
         crown.setOnTouchListener(this);
         scroll.setOnTouchListener(this);
-
 
     }
 

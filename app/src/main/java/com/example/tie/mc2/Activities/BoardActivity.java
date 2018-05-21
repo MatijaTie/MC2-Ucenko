@@ -34,7 +34,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import butterknife.ButterKnife;
 
 import static com.example.tie.mc2.StaticValues.DataKeys.FRAGMENT_BOARD_MAIN;
 import static com.example.tie.mc2.StaticValues.DataKeys.FRAGMENT_TOOLBAR_MAIN;
